@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "/Users/zexu/go/src/github.com/moshopserver/main",
+            "program": "/Users/zexu/go/src/github.com/moshopserver",
             "env": {},
             "args": []
         }
