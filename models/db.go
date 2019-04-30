@@ -431,13 +431,18 @@ type NideshopUserLevel struct {
 // }
 
 func init() {
+
 	// set default database
 	orm.RegisterDataBase("default", "mysql", "root:123@tcp(127.0.0.1:3306)/nideshop?charset=utf8mb4", 30)
 
 	// register model
+	orm.RegisterModel(new(NideshopAd))
+	orm.RegisterModel(new(NideshopChannel))
+	orm.RegisterModel(new(NideshopGoods))
+	orm.RegisterModel(new(NideshopBrand))
+	orm.RegisterModel(new(NideshopTopic))
+	orm.RegisterModel(new(NideshopCategory))
+
 	orm.RegisterModel(new(NideshopUser))
 	orm.RegisterModel(new(NideshopAttributeCategory))
-
-	// create table
-	orm.RunSyncdb("default", false, true)
 }

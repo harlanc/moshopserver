@@ -2,7 +2,7 @@ package routers
 
 func init() {
 
-	//beego.Router("api/index/index",)
+	//beego.Router("api/index/index")
 	// Register routers.
 	//beego.Router("/", &controllers.AppController{})
 	// Indicate AppController.Join method to handle POST requests.
