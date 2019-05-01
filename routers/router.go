@@ -1,8 +1,13 @@
 package routers
 
+import (
+	"github.com/astaxie/beego"
+	"github.com/moshopserver/controllers"
+)
+
 func init() {
 
-	//beego.Router("api/index/index")
+	beego.Router("api/index/index", &controllers.IndexController{}, "get:Get")
 	// Register routers.
 	//beego.Router("/", &controllers.AppController{})
 	// Indicate AppController.Join method to handle POST requests.

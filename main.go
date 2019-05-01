@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/moshopserver/controllers"
-
 	"github.com/astaxie/beego"
 	_ "github.com/moshopserver/models"
 	_ "github.com/moshopserver/routers"
@@ -23,7 +21,8 @@ func main() {
 
 	// }
 
-	controller := controllers.IndexController
+	//controller := controllers.IndexController
+	beego.BConfig.WebConfig.AutoRender = false
 
 	beego.Run() // listen and serve on 0.0.0.0:8080
 
