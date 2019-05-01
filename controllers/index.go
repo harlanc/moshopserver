@@ -57,82 +57,14 @@ func (this *IndexController) Get() {
 		o.QueryTable(goods).Filter("category_id__in", ids).Limit(7).Values(&categorygoods, "id", "name", "list_pic_url", "retail_price")
 
 		newList = append(newList, newCategoryList{categoryItem.Id, categoryItem.Name, categorygoods})
-
 	}
 
-	// qb, _ := orm.NewQueryBuilder("mysql")
-	// o := orm.NewOrm()
-	// var sql string
-
-	// var banners []models.NideshopAd
-	// qb.Select("*").
-	// 	From("nideshop_ad").
-	// 	Where("id == 1")
-	// sql = qb.String()
-
-	// o.Raw(sql, 20).QueryRows(&banners)
-	// this.Data["banner"] = banners
-
-	// var channels []models.NideshopChannel
-	// qb.Select("*").From("nideshop_channel").OrderBy("asc")
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&channels)
-	// this.Data["channel"] = channels
-
-	// var newgoogs []models.NideshopGoods
-	// qb.Select("id,name,list_pic_url,retail_price").From("nideshop_goods").Where("is_new == 1").Limit(4)
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&newgoogs)
-	// this.Data["newGoodsList"] = newgoogs
-
-	// var hotgoogs []models.NideshopGoods
-	// qb.Select("id,name,list_pic_url,retail_price,goods_brief").From("nideshop_goods").Where("is_hot == 1").Limit(3)
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&hotgoogs)
-	// this.Data["hotGoodsList"] = hotgoogs
-
-	// var brandList []models.NideshopBrand
-	// qb.Select("*").From("nideshop_brand").Where("is_new == 1").OrderBy("asc").Limit(3)
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&brandList)
-	// this.Data["brandList"] = brandList
-
-	// var topicList []models.NideshopTopic
-	// qb.Select("*").From("nideshop_topic").Limit(3)
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&topicList)
-	// this.Data["topicList"] = topicList
-
-	// type newCategoryList struct {
-	// 	id        int
-	// 	name      string
-	// 	goodsList models.NideshopGoods
-	// }
-
-	// var caregoryList []models.NideshopCategory
-	// var newCategoryList []newCategoryList
-	// qb.Select("*").From("nideshop_category").Where("parent_id == 0 && name <> '推荐'")
-	// sql = qb.String()
-	// o.Raw(sql, 20).QueryRows(&caregoryList)
-	// for _, categoryItem := range caregoryList {
-	// 	var ids []int
-	// 	qb.Select("id").From("nideshop_category").Where("parent_id == " + strconv.Itoa(categoryItem.Id)).Limit(100)
-	// 	sql = qb.String()
-	// 	o.Raw(sql, 20).QueryRows(&ids)
-
-	// }
-
-	// o := orm.NewOrm()
-	// / banner := models.NideshopAd{AdPositionId: 1}
-
-	// err := o.Read(&banner)
-
-	// if err == orm.ErrNoRows {
-	// 	fmt.Println("Can not find.")
-	// } else if err == orm.ErrMissPK {
-	// 	fmt.Println("Can not find main key.")
-	// } else {
-	// 	fmt.Println(banner.Id, banner.Name)
-	// }
+	this.Data["banner"] = banners
+	this.Data["channel"] = channels
+	this.Data["newGoodList"] = newgoogs
+	this.Data["hotGoodList"] = hotgoogs
+	this.Data["brandList"] = brandList
+	this.Data["topicList"] = topicList
+	this.Data["categoryList"] = newList
 
 }
