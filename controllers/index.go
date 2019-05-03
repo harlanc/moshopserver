@@ -13,9 +13,9 @@ type IndexController struct {
 }
 
 type newCategoryList struct {
-	Id        int
-	Name      string
-	GoodsList []orm.Params
+	Id        int          `json:"id"`
+	Name      string       `json:"name"`
+	GoodsList []orm.Params `json:"goodsList"`
 }
 
 type RtnJson struct {
@@ -26,6 +26,28 @@ type RtnJson struct {
 	BrandList    []models.NideshopBrand   `json:"brandList"`
 	TopicList    []models.NideshopTopic   `json:"topicList"`
 	CategoryList []newCategoryList        `json:"categoryList"`
+}
+
+func updateJsonKeys(vals []orm.Params) {
+
+	for _, val := range vals {
+		for k, v := range val {
+			switch k {
+			case "Id":
+				delete(val, k)
+				val["id"] = v
+			case "Name":
+				delete(val, k)
+				val["name"] = v
+			case "ListPicUrl":
+				delete(val, k)
+				val["list_pic_url"] = v
+			case "RetailPrice":
+				delete(val, k)
+				val["retail_price"] = v
+			}
+		}
+	}
 }
 
 func (this *IndexController) Get() {
@@ -43,9 +65,11 @@ func (this *IndexController) Get() {
 	var newgoods []orm.Params
 	goods := new(models.NideshopGoods)
 	o.QueryTable(goods).Filter("is_new", 1).Limit(4).Values(&newgoods, "id", "name", "list_pic_url", "retail_price")
+	updateJsonKeys(newgoods)
 
 	var hotgoods []orm.Params
 	o.QueryTable(goods).Filter("is_hot", 1).Limit(3).Values(&hotgoods, "id", "name", "list_pic_url", "retail_price", "goods_brief")
+	updateJsonKeys(hotgoods)
 
 	var brandList []models.NideshopBrand
 	brand := new(models.NideshopBrand)
@@ -72,6 +96,7 @@ func (this *IndexController) Get() {
 
 		var categorygoods []orm.Params
 		o.QueryTable(goods).Filter("category_id__in", valIds).Limit(7).Values(&categorygoods, "id", "name", "list_pic_url", "retail_price")
+		updateJsonKeys(categorygoods)
 		newList = append(newList, newCategoryList{categoryItem.Id, categoryItem.Name, categorygoods})
 	}
 
