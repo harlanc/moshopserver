@@ -13,19 +13,19 @@ type IndexController struct {
 }
 
 type newCategoryList struct {
-	id        int
-	name      string
-	goodsList []orm.Params
+	Id        int
+	Name      string
+	GoodsList []orm.Params
 }
 
 type RtnJson struct {
-	Banners      []models.NideshopAd
-	Channels     []models.NideshopChannel
-	Newgoods     []orm.Params
-	Hotgoods     []orm.Params
-	BrandList    []models.NideshopBrand
-	TopicList    []models.NideshopTopic
-	CategoryList []newCategoryList
+	Banners      []models.NideshopAd      `json:"banner"`
+	Channels     []models.NideshopChannel `json:"channel"`
+	Newgoods     []orm.Params             `json:"newGoodsList"`
+	Hotgoods     []orm.Params             `json:"hotGoodsList"`
+	BrandList    []models.NideshopBrand   `json:"brandList"`
+	TopicList    []models.NideshopTopic   `json:"topicList"`
+	CategoryList []newCategoryList        `json:"categoryList"`
 }
 
 func (this *IndexController) Get() {
@@ -34,7 +34,7 @@ func (this *IndexController) Get() {
 
 	var banners []models.NideshopAd
 	ad := new(models.NideshopAd)
-	o.QueryTable(ad).Filter("id", 1).All(&banners)
+	o.QueryTable(ad).Filter("ad_position_id", 1).All(&banners)
 
 	var channels []models.NideshopChannel
 	channel := new(models.NideshopChannel)
@@ -62,12 +62,16 @@ func (this *IndexController) Get() {
 	var newList []newCategoryList
 
 	for _, categoryItem := range categoryList {
-		var ids []orm.Params
-		o.QueryTable(category).Filter("parent_id", categoryItem.Id).Values(&ids, "id")
+		var mapids []orm.Params
+		o.QueryTable(category).Filter("parent_id", categoryItem.Id).Values(&mapids, "id")
+
+		var valIds []int64
+		for _, value := range mapids {
+			valIds = append(valIds, value["Id"].(int64))
+		}
 
 		var categorygoods []orm.Params
-		o.QueryTable(goods).Filter("category_id__in", ids).Limit(7).Values(&categorygoods, "id", "name", "list_pic_url", "retail_price")
-
+		o.QueryTable(goods).Filter("category_id__in", valIds).Limit(7).Values(&categorygoods, "id", "name", "list_pic_url", "retail_price")
 		newList = append(newList, newCategoryList{categoryItem.Id, categoryItem.Name, categorygoods})
 	}
 
@@ -76,7 +80,7 @@ func (this *IndexController) Get() {
 		this.Data["json"] = err
 
 	} else {
-		this.Data["json"] = string(data)
+		this.Data["json"] = json.RawMessage(string(data))
 	}
 
 	this.ServeJSON()
