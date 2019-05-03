@@ -7,7 +7,10 @@ import (
 
 func init() {
 
-	beego.Router("api/index/index", &controllers.IndexController{}, "get:Get")
+	beego.Router("api/index/index", &controllers.IndexController{}, "get:Index_Index")
+
+	beego.Router("api/catalog/index", &controllers.CatalogController{}, "get:Catalog_Index")
+	beego.Router("api/catalog/current", &controllers.CatalogController{}, "get:Catalog_Current")
 	// Register routers.
 	//beego.Router("/", &controllers.AppController{})
 	// Indicate AppController.Join method to handle POST requests.

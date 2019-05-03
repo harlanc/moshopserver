@@ -18,7 +18,7 @@ type newCategoryList struct {
 	GoodsList []orm.Params `json:"goodsList"`
 }
 
-type RtnJson struct {
+type IndexRtnJson struct {
 	Banners      []models.NideshopAd      `json:"banner"`
 	Channels     []models.NideshopChannel `json:"channel"`
 	Newgoods     []orm.Params             `json:"newGoodsList"`
@@ -50,7 +50,7 @@ func updateJsonKeys(vals []orm.Params) {
 	}
 }
 
-func (this *IndexController) Get() {
+func (this *IndexController) Index_Index() {
 
 	o := orm.NewOrm()
 
@@ -100,7 +100,7 @@ func (this *IndexController) Get() {
 		newList = append(newList, newCategoryList{categoryItem.Id, categoryItem.Name, categorygoods})
 	}
 
-	data, err := json.Marshal(RtnJson{banners, channels, newgoods, hotgoods, brandList, topicList, newList})
+	data, err := json.Marshal(IndexRtnJson{banners, channels, newgoods, hotgoods, brandList, topicList, newList})
 	if err != nil {
 		this.Data["json"] = err
 
