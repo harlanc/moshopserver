@@ -14,12 +14,27 @@ type CatalogController struct {
 
 type CurCategory struct {
 	models.NideshopCategory
-	SubCategoryList []models.NideshopCategory
+	SubCategoryList []models.NideshopCategory `json:"subCategoryList"`
 }
 
 type CateLogRtnJson struct {
-	CategoryList    []models.NideshopCategory
-	CurrentCategory CurCategory
+	CategoryList    []models.NideshopCategory `json:"categoryList"`
+	CurrentCategory CurCategory               `json:"currentCategory"`
+}
+
+func getCurCategory(categoryId string) CurCategory {
+
+	o := orm.NewOrm()
+
+	var currentCategory models.NideshopCategory
+	category := new(models.NideshopCategory)
+	if &categoryId != nil {
+		o.QueryTable(category).Filter("id", categoryId).One(&currentCategory)
+	}
+
+	var subCategories []models.NideshopCategory
+	o.QueryTable(category).Filter("parent_id", currentCategory.Id).All(&subCategories)
+	return CurCategory{currentCategory, subCategories}
 }
 
 func (this *CatalogController) Catalog_Index() {
@@ -31,22 +46,9 @@ func (this *CatalogController) Catalog_Index() {
 	category := new(models.NideshopCategory)
 	o.QueryTable(category).Filter("parent_id", 0).Limit(10).All(&categories)
 
-	var currentCategory models.NideshopCategory
-
-	if &categoryId != nil {
-		o.QueryTable(category).Filter("id", categoryId).One(&currentCategory)
-		if &currentCategory == nil {
-			currentCategory = categories[0]
-		}
-	}
-
-	var subCategories []models.NideshopCategory
-	o.QueryTable(category).Filter("parent_id", currentCategory.Id).All(&subCategories)
-
-	data, err := json.Marshal(CateLogRtnJson{categories, CurCategory{currentCategory, subCategories}})
+	data, err := json.Marshal(CateLogRtnJson{categories, getCurCategory(categoryId)})
 	if err != nil {
 		this.Data["json"] = err
-
 	} else {
 		this.Data["json"] = json.RawMessage(string(data))
 	}
@@ -55,4 +57,15 @@ func (this *CatalogController) Catalog_Index() {
 }
 
 func (this *CatalogController) Catalog_Current() {
+
+	categoryId := this.GetString("id")
+
+	data, err := json.Marshal(CateLogRtnJson{CurrentCategory: getCurCategory(categoryId)})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+
 }
