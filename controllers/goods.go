@@ -18,6 +18,30 @@ type SkuRtnJson struct {
 	SpecificationList []models.SpecificationItem
 }
 
+type Attribute struct {
+	Value string
+	Name  string
+}
+
+type CommentUser struct {
+	NickName string
+	UserName string
+	Avatar   string
+}
+
+type CommentInfo struct {
+	Content  string
+	AddTime  int64
+	NickName string
+	Avatar   string
+	PicList  []models.NideshopCommentPicture
+}
+
+type Comment struct {
+	Count int64
+	Data  CommentInfo
+}
+
 func (this *GoodsController) Goods_Index() {
 	o := orm.NewOrm()
 
@@ -52,31 +76,67 @@ func (this *GoodsController) Goods_Sku() {
 }
 
 func (this *GoodsController) Goods_Detail() {
+
 	goodsId := this.GetString("id")
 	intGoodsId := utils.String2Int(goodsId)
 
 	o := orm.NewOrm()
 
-	var goods []models.NideshopGoods
+	var goodone models.NideshopGoods
 	good := new(models.NideshopGoods)
-	o.QueryTable(good).Filter("id", intGoodsId).All(&goods)
+	o.QueryTable(good).Filter("id", intGoodsId).One(&goodone)
 
 	var galleries []models.NideshopGoodsGallery
 	gallery := new(models.NideshopGoodsGallery)
 	o.QueryTable(gallery).Filter("goods_id", intGoodsId).Limit(4).All(&galleries)
 
+	var issues []models.NideshopGoodsIssue
+	issue := new(models.NideshopGoodsIssue)
+	o.QueryTable(issue).All(&issues)
+
+	var brandone models.NideshopBrand
+	brand := new(models.NideshopBrand)
+	o.QueryTable(brand).Filter("id", goodone.BrandId).One(&brandone)
+
+	comment := new(models.NideshopComment)
+	//commentCount, _ := o.QueryTable(comment).Filter("value_id", intGoodsId).Filter("type_id", 0).Count()
+	var hotcommentone models.NideshopComment
+	o.QueryTable(comment).Filter("value_id", intGoodsId).Filter("type_id", 0).One(&hotcommentone)
+
+	//var commentInfo CommentInfo
+
+	if &hotcommentone != nil {
+
+		user := new(models.NideshopUser)
+		var commentUsers []orm.Params
+		o.QueryTable(user).Filter("id", hotcommentone.UserId).Values(&commentUsers, "nickname", "username", "avatar")
+		//content, _ := base64.StdEncoding.DecodeString(hotcommentone.Content)
+
+		var commentpictures []models.NideshopCommentPicture
+		commentpicture := new(models.NideshopCommentPicture)
+		o.QueryTable(commentpicture).Filter("comment_id", hotcommentone.Id).All(&commentpictures)
+
+		//commentInfo = CommentInfo{Content: string(content), AddTime: hotcommentone.AddTime, NickName: user.Nickname, Avatar: user.Avatar, PicList: commentpictures}
+
+	}
+
+	//commentval := Comment{Count: commentCount, Data: commentInfo}
+
 	qb, _ := orm.NewQueryBuilder("mysql")
 
-	var attributes []models.NideshopAttribute
+	var attributes []Attribute
 
-	qb.Select("gs.*", "s.name").
-		From("nideshop_goods_specification gs").
-		InnerJoin("nideshop_specification s").On("gs.specification_id = s.id").
-		Where("gs.specification_id =" + utils.Int2String(goodsId))
+	qb.Select("gs.value", "a.name").
+		From("nideshop_goods_attribute ga").
+		InnerJoin("nideshop_attribute a").On("ga.attribute_id = a.id").
+		Where("ga.goods_id =" + goodsId).OrderBy("ga.id").Asc()
 
 	sql := qb.String()
+	o.Raw(sql, 20).QueryRows(&attributes)
 
-	o := orm.NewOrm()
-	o.Raw(sql, 20).QueryRows(&specifications)
+}
+
+func (this *GoodsController) getLoginUserId() {
+	//	return this.Ctx.UserId
 
 }
