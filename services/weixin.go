@@ -1,13 +1,16 @@
 package services
 
 import (
-	"crypto"
+	"crypto/sha1"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
 
 	"github.com/astaxie/beego/httplib"
 	"github.com/moshopserver/utils"
 )
 
-type LoginResponse struct {
+type WXLoginResponse struct {
 	OpenID     string `json:"openid"`
 	SessionKey string `json:"session_key"`
 	UnionID    string `json:"unionid"`
@@ -15,7 +18,35 @@ type LoginResponse struct {
 	ErrMsg     string `json:"errmsg"`
 }
 
-func Login(code string, fullUserInfo string) {
+//https://developers.weixin.qq.com/miniprogram/dev/api/wx.getUserInfo.html
+
+type WXUserInfo struct {
+	NickName  string `json:"nickName"`
+	AvatarUrl string `json:"avatarUrl"`
+	Gender    int    `json:"gender"`
+	Country   string `json:"country"`
+	Province  string `json:"province"`
+	City      string `json:"city"`
+	Language  string `json:"language"`
+}
+
+type ResUserInfo struct {
+	UserInfo      WXUserInfo `json:"userInfo"`
+	RawData       string     `json:"rawData"`
+	Signature     string     `json:"signature"`
+	EncryptedData string     `json:"encryptedData"`
+	IV            string     `json:"iv"`
+}
+
+func Login(code string, fullUserInfo string) WXUserInfo {
+
+	var resUserInfo ResUserInfo
+
+	err := json.Unmarshal([]byte(fullUserInfo), &resUserInfo)
+
+	if err != nil {
+
+	}
 
 	config, _ := utils.GetConfig()
 
@@ -26,9 +57,38 @@ func Login(code string, fullUserInfo string) {
 	req.Param("secret", config.Wx.Secret)
 	req.Param("appid", config.Wx.Appid)
 
-	var res LoginResponse
+	var res WXLoginResponse
 	req.ToJSON(&res)
 
-	crypto.Hash()
+	s := sha1.New()
+	s.Write([]byte(resUserInfo.RawData + res.SessionKey))
+	sha1hash := hex.EncodeToString(s.Sum(nil))
 
+	if resUserInfo.Signature != sha1hash {
+
+	}
+	userinfo := DecryptUserInfoData(res.SessionKey, resUserInfo.EncryptedData, resUserInfo.IV)
+
+	return userinfo
+
+}
+
+func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) WXUserInfo {
+
+	sk, _ := base64.StdEncoding.DecodeString(sessionKey)
+	ed, _ := base64.StdEncoding.DecodeString(encryptedData)
+	i, _ := base64.StdEncoding.DecodeString(iv)
+
+	decryptedData, err := utils.AesCBCDecrypt(ed, sk, i)
+
+	if err != nil {
+
+	}
+
+	var wxuserinfo WXUserInfo
+	err = json.Unmarshal([]byte(decryptedData), &wxuserinfo)
+	if err != nil {
+
+	}
+	return wxuserinfo
 }
