@@ -3,6 +3,8 @@ package controllers
 import (
 	"encoding/json"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
 	"github.com/moshopserver/services"
@@ -20,10 +22,12 @@ func (this *CatalogController) Auth_loginByWeixin() {
 
 	o := orm.NewOrm()
 
-	var user models.NideshopUser
+	var users []orm.Params
 	usertable := new(models.NideshopCategory)
-	err := o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).Limit(10).One(&user)
-	if err != nil {
+	nums, err := o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).Values(&users, "id")
+	if nums == 0 {
+		uuid, err := uuid.NewV4()
+		newuser := models.NideshopUser{Username: uuid.String(),Password:"",RegisterTime:}
 
 	}
 

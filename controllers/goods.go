@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 
 	"github.com/astaxie/beego"
@@ -99,28 +100,28 @@ func (this *GoodsController) Goods_Detail() {
 	o.QueryTable(brand).Filter("id", goodone.BrandId).One(&brandone)
 
 	comment := new(models.NideshopComment)
-	//commentCount, _ := o.QueryTable(comment).Filter("value_id", intGoodsId).Filter("type_id", 0).Count()
+	commentCount, _ := o.QueryTable(comment).Filter("value_id", intGoodsId).Filter("type_id", 0).Count()
 	var hotcommentone models.NideshopComment
 	o.QueryTable(comment).Filter("value_id", intGoodsId).Filter("type_id", 0).One(&hotcommentone)
 
-	//var commentInfo CommentInfo
+	var commentInfo CommentInfo
 
 	if &hotcommentone != nil {
 
 		user := new(models.NideshopUser)
 		var commentUsers []orm.Params
 		o.QueryTable(user).Filter("id", hotcommentone.UserId).Values(&commentUsers, "nickname", "username", "avatar")
-		//content, _ := base64.StdEncoding.DecodeString(hotcommentone.Content)
+		content, _ := base64.StdEncoding.DecodeString(hotcommentone.Content)
 
 		var commentpictures []models.NideshopCommentPicture
 		commentpicture := new(models.NideshopCommentPicture)
 		o.QueryTable(commentpicture).Filter("comment_id", hotcommentone.Id).All(&commentpictures)
 
-		//commentInfo = CommentInfo{Content: string(content), AddTime: hotcommentone.AddTime, NickName: user.Nickname, Avatar: user.Avatar, PicList: commentpictures}
+		commentInfo = CommentInfo{Content: string(content), AddTime: hotcommentone.AddTime, NickName: user.Nickname, Avatar: user.Avatar, PicList: commentpictures}
 
 	}
 
-	//commentval := Comment{Count: commentCount, Data: commentInfo}
+	commentval := Comment{Count: commentCount, Data: commentInfo}
 
 	qb, _ := orm.NewQueryBuilder("mysql")
 
