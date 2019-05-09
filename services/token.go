@@ -6,20 +6,36 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-const secret string = "adf1212!@$"
+const key string = "adf1212!@$"
 
-func GetUserID(token string) {
-
+type CustomClaims struct {
+	UserID string `json:"userid"`
+	jwt.StandardClaims
 }
 
-func Parse(tokenstr string) {
+func GetUserID(tokenstr string) string {
 
-	token, err := jwt.Parse(tokenstr, func(token *jwt.Token) (interface{}, error) {
-		return []byte("AllYourBase"), nil
+	token := Parse(tokenstr)
+
+	if token == nil {
+		return ""
+	}
+
+	if claims, ok := token.Claims.(*CustomClaims); ok {
+		return claims.UserID
+	}
+
+	return ""
+}
+
+func Parse(tokenstr string) *jwt.Token {
+
+	token, err := jwt.ParseWithClaims(tokenstr, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(key), nil
 	})
+
 	if token.Valid {
-		fmt.Println("You look nice today")
-		//return token.Claims
+		return token
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 			fmt.Println("That's not even a token")
@@ -32,14 +48,30 @@ func Parse(tokenstr string) {
 	} else {
 		fmt.Println("Couldn't handle this token:", err)
 	}
+	return nil
 
 }
 
-func create(userInfo string) string {
+func Create(userid string) string {
+	claims := CustomClaims{
+		userid, jwt.StandardClaims{
+			ExpiresAt: 15000,
+			Issuer:    "test",
+		},
+	}
 
-	token, err := jwt.SigningMethodHS256.Sign(userInfo, secret)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenstr, err := token.SignedString(key)
+
 	if err == nil {
-		return token
+		return tokenstr
 	}
 	return ""
+}
+
+func Verify(tokenstr string) bool {
+
+	token := Parse(tokenstr)
+	return token != nil
+
 }

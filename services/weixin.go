@@ -20,14 +20,21 @@ type WXLoginResponse struct {
 
 //https://developers.weixin.qq.com/miniprogram/dev/api/wx.getUserInfo.html
 
+type Watermark struct {
+	AppID     string `json:"appid"`
+	TimeStamp int    `json:"timestamp"`
+}
+
 type WXUserInfo struct {
-	NickName  string `json:"nickName"`
-	AvatarUrl string `json:"avatarUrl"`
-	Gender    int    `json:"gender"`
-	Country   string `json:"country"`
-	Province  string `json:"province"`
-	City      string `json:"city"`
-	Language  string `json:"language"`
+	OpenID    string    `json:"openId"`
+	NickName  string    `json:"nickName"`
+	AvatarUrl string    `json:"avatarUrl"`
+	Gender    int       `json:"gender"`
+	Country   string    `json:"country"`
+	Province  string    `json:"province"`
+	City      string    `json:"city"`
+	UnionID   string    `json:"unionId"`
+	Watermark Watermark `json:"watermark"`
 }
 
 type ResUserInfo struct {
@@ -38,14 +45,14 @@ type ResUserInfo struct {
 	IV            string     `json:"iv"`
 }
 
-func Login(code string, fullUserInfo string) WXUserInfo {
+func Login(code string, fullUserInfo string) *WXUserInfo {
 
 	var resUserInfo ResUserInfo
 
 	err := json.Unmarshal([]byte(fullUserInfo), &resUserInfo)
 
 	if err != nil {
-
+		return nil
 	}
 
 	config, _ := utils.GetConfig()
@@ -65,11 +72,11 @@ func Login(code string, fullUserInfo string) WXUserInfo {
 	sha1hash := hex.EncodeToString(s.Sum(nil))
 
 	if resUserInfo.Signature != sha1hash {
-
+		return nil
 	}
 	userinfo := DecryptUserInfoData(res.SessionKey, resUserInfo.EncryptedData, resUserInfo.IV)
 
-	return userinfo
+	return &userinfo
 
 }
 
