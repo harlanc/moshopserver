@@ -3,17 +3,17 @@ package controllers
 import (
 	"encoding/json"
 
-	uuid "github.com/satori/go.uuid"
-
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
 	"github.com/moshopserver/services"
+	"github.com/moshopserver/utils"
 )
 
 func (this *CatalogController) Auth_loginByWeixin() {
+
 	code := this.GetString("code")
 	fulluserinfo := this.GetString("userInfo")
-	clientIP := this.Ctx.Input.IP
+	clientIP := this.Ctx.Input.IP()
 
 	userInfo := services.Login(code, fulluserinfo)
 	if userInfo == nil {
@@ -22,20 +22,39 @@ func (this *CatalogController) Auth_loginByWeixin() {
 
 	o := orm.NewOrm()
 
-	var users []orm.Params
+	var user models.NideshopUser
 	usertable := new(models.NideshopCategory)
-	nums, err := o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).Values(&users, "id")
-	if nums == 0 {
-		uuid, err := uuid.NewV4()
-		newuser := models.NideshopUser{Username: uuid.String(),Password:"",RegisterTime:}
+	err := o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).One(&user)
+	if err != nil {
+		newuser := models.NideshopUser{Username: utils.GetUUID(), Password: "", RegisterTime: utils.GetTimestamp(),
+			RegisterIp: clientIP, Mobile: "", WeixinOpenid: userInfo.OpenID, Avatar: userInfo.AvatarUrl, Gender: userInfo.Gender,
+			Nickname: userInfo.NickName}
+		o.Insert(&newuser)
+		o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).One(&user)
+	}
+
+	userinfo := make(map[string]interface{})
+	userinfo["id"] = user.Id
+	userinfo["username"] = user.Username
+	userinfo["nickname"] = user.Nickname
+	userinfo["gender"] = user.Gender
+	userinfo["avatar"] = user.Avatar
+	userinfo["birthday"] = user.Birthday
+
+	user.LastLoginIp = clientIP
+	user.LastLoginTime = utils.GetTimestamp()
+
+	if _, err := o.Update(&user); err == nil {
 
 	}
 
-	var categories []models.NideshopCategory
-	category := new(models.NideshopCategory)
-	o.QueryTable(category).Filter("parent_id", 0).Limit(10).All(&categories)
+	sessionKey := services.Create(utils.Int2String(user.Id))
 
-	data, err := json.Marshal(CateLogRtnJson{categories, getCurCategory(categoryId)})
+	rtnInfo := make(map[string]interface{})
+	rtnInfo["sessionKey"] = sessionKey
+	rtnInfo["userInfo"] = userinfo
+
+	data, err := json.Marshal(rtnInfo)
 	if err != nil {
 		this.Data["json"] = err
 	} else {
