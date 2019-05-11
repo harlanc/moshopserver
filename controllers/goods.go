@@ -19,6 +19,23 @@ type SkuRtnJson struct {
 	SpecificationList []models.SpecificationItem
 }
 
+type DetailRtnJson struct {
+	SkuRtnJson
+	Goods          models.NideshopGoods
+	Galleries      []models.NideshopGoodsGallery
+	Attribute      []Attribute
+	Issues         []models.NideshopGoodsIssue
+	UserHasCollect bool
+	Comment        Comment
+	Brand          models.NideshopBrand
+}
+
+type CategoryRtnJson struct {
+	CurCategory     models.NideshopCategory
+	ParentCategory  models.NideshopCategory
+	BrotherCategory []models.NideshopCategory
+}
+
 type Attribute struct {
 	Value string
 	Name  string
@@ -91,6 +108,15 @@ func (this *GoodsController) Goods_Detail() {
 	gallery := new(models.NideshopGoodsGallery)
 	o.QueryTable(gallery).Filter("goods_id", intGoodsId).Limit(4).All(&galleries)
 
+	qb, _ := orm.NewQueryBuilder("mysql")
+	var attributes []Attribute
+	qb.Select("gs.value", "a.name").
+		From("nideshop_goods_attribute ga").
+		InnerJoin("nideshop_attribute a").On("ga.attribute_id = a.id").
+		Where("ga.goods_id =" + goodsId).OrderBy("ga.id").Asc()
+	sql := qb.String()
+	o.Raw(sql, 20).QueryRows(&attributes)
+
 	var issues []models.NideshopGoodsIssue
 	issue := new(models.NideshopGoodsIssue)
 	o.QueryTable(issue).All(&issues)
@@ -122,18 +148,61 @@ func (this *GoodsController) Goods_Detail() {
 	}
 
 	commentval := Comment{Count: commentCount, Data: commentInfo}
+	loginuserid := utils.String2Int(getLoginUserId())
 
-	qb, _ := orm.NewQueryBuilder("mysql")
+	userhascollect := isUserHasCollect(loginuserid, 0, intGoodsId)
 
-	var attributes []Attribute
+	models.AddFootprint(loginuserid, intGoodsId)
 
-	qb.Select("gs.value", "a.name").
-		From("nideshop_goods_attribute ga").
-		InnerJoin("nideshop_attribute a").On("ga.attribute_id = a.id").
-		Where("ga.goods_id =" + goodsId).OrderBy("ga.id").Asc()
+	plist := models.GetProductList(intGoodsId)
+	slist := models.GetSpecificationList(intGoodsId)
 
-	sql := qb.String()
-	o.Raw(sql, 20).QueryRows(&attributes)
+	data, err := json.Marshal(DetailRtnJson{Goods: goodone, Galleries: galleries, Attribute: attributes,
+		UserHasCollect: userhascollect, Issues: issues, Comment: commentval, Brand: *brand,
+		SkuRtnJson: SkuRtnJson{ProductList: plist, SpecificationList: slist}})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+}
+
+func (this *GoodsController) Goods_Category() {
+
+	goodsId := this.GetString("id")
+	intgoogsid := utils.String2Int(goodsId)
+
+	o := orm.NewOrm()
+	var curcategory models.NideshopCategory
+	var parentcategory models.NideshopCategory
+	var brothercategory []models.NideshopCategory
+
+	category := new(models.NideshopCategory)
+
+	o.QueryTable(category).Filter("id", intgoogsid).One(&curcategory)
+	o.QueryTable(category).Filter("id", curcategory.ParentId).One(&parentcategory)
+	o.QueryTable(category).Filter("parent_id", curcategory.ParentId).One(&brothercategory)
+
+	data, err := json.Marshal(CategoryRtnJson{CurCategory: curcategory,
+		ParentCategory: parentcategory, BrotherCategory: brothercategory})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+}
+func (this *GoodsController) Goods_List() {
+	categoryId := this.GetString("categoryId")
+	brandId := this.GetString("brandId")
+	keyword := this.GetString("keyword")
+	isNew := this.GetString("isNew")
+	isHot := this.GetString("isHot")
+	page := this.GetString("page")
+	size := this.GetString("size")
+	sort := this.GetString("sort")
+	order := this.GetString("order")
 
 }
 

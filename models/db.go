@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/astaxie/beego/orm"
-	_ "github.com/go-sql-driver/mysql"
+	//_ "github.com/go-sql-driver/mysql"
 )
 
 type NideshopAd struct {
@@ -182,10 +182,10 @@ type NideshopFeedback struct {
 }
 
 type NideshopFootprint struct {
-	AddTime int `orm:"not null default 0 INT(11)"`
-	GoodsId int `orm:"not null default 0 INT(11)"`
-	Id      int `orm:"not null pk autoincr INT(11)"`
-	UserId  int `orm:"not null default 0 INT(11)"`
+	AddTime int64 `orm:"not null default 0 INT(11)"`
+	GoodsId int   `orm:"not null default 0 INT(11)"`
+	Id      int   `orm:"not null pk autoincr INT(11)"`
+	UserId  int   `orm:"not null default 0 INT(11)"`
 }
 
 type NideshopGoods struct {
@@ -399,12 +399,12 @@ type NideshopUser struct {
 	Gender        int    `json:"gender"`
 	Id            int    `json:"id"`
 	LastLoginIp   string `json:"last_login_ip"`
-	LastLoginTime int    `json:"last_login_time"`
+	LastLoginTime int64  `json:"last_login_time"`
 	Mobile        string `json:"mobile"`
 	Nickname      string `json:"nickname"`
 	Password      string `json:"password"`
 	RegisterIp    string `json:"register_ip"`
-	RegisterTime  int    `json:"register_time"`
+	RegisterTime  int64  `json:"register_time"`
 	UserLevelId   int    `json:"user_level_id"`
 	Username      string `json:"username"`
 	WeixinOpenid  string `json:"weixin_openid"`

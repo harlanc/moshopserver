@@ -1,6 +1,11 @@
 package utils
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 func String2Int(val string) int {
 
@@ -14,4 +19,24 @@ func String2Int(val string) int {
 
 func Int2String(val int) string {
 	return strconv.Itoa(val)
+}
+
+func GetUUID() string {
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		return ""
+	} else {
+		return uuid.String()
+	}
+}
+
+//the result likes 1423361979
+func GetTimestamp() int64 {
+	return time.Now().Unix()
+}
+
+//the result likes 2015-02-08 10:19:39 AM
+func FormatTimestamp(timestamp int64) string {
+	tm := time.Unix(timestamp, 0)
+	return tm.Format("2006-01-02 03:04:05 PM")
 }

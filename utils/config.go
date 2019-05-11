@@ -1,10 +1,7 @@
 package utils
 
 import (
-	"io/ioutil"
-	"log"
-
-	yaml "gopkg.in/yaml.v2"
+	"github.com/astaxie/beego"
 )
 
 /*
@@ -22,36 +19,6 @@ import (
     request_url: 'http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx'
 */
 
-type Config struct {
-	Default_moudle string  `yaml:"default_module"`
-	Wx             WeiXin  `yaml:"weixin"`
-	Exp            Express `yaml:"express"`
-}
-
-type WeiXin struct {
-	Appid       string `yaml:"appid"`
-	Secret      string `yaml:"secret"`
-	Mch_id      string `yaml:"mch_id"`
-	Partner_key string `yaml:"partner_key"`
-	Notify_url  string `yaml:"notify_url"`
-}
-type Express struct {
-	Appid       string `yaml:"appid"`
-	Appkey      string `yaml:"appkey"`
-	Request_url string `yaml:"request_url"`
-}
-
-var configFile []byte
-
 func init() {
-	var err error
-	configFile, err = ioutil.ReadFile("config.yml")
-	if err != nil {
-		log.Fatalf("yamlFile.Get err %v ", err)
-	}
-}
-
-func GetConfig() (e *Config, err error) {
-	err = yaml.Unmarshal(configFile, &e)
-	return e, err
+	beego.LoadAppConfig("ini", "conf/config.conf")
 }

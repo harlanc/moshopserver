@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	_ "github.com/moshopserver/models"
 	_ "github.com/moshopserver/routers"
+	_ "github.com/moshopserver/utils"
 )
 
 func main() {
@@ -20,6 +21,9 @@ func main() {
 	// 	fmt.Println(id)
 
 	// }
+	// config, _ := utils.GetConfig()
+
+	// fmt.Println(config)
 
 	//controller := controllers.IndexController
 	beego.BConfig.WebConfig.AutoRender = false

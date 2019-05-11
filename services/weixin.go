@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
 	"github.com/moshopserver/utils"
 )
@@ -55,14 +56,15 @@ func Login(code string, fullUserInfo string) *WXUserInfo {
 		return nil
 	}
 
-	config, _ := utils.GetConfig()
+	secret := beego.AppConfig.String("weixin::secret")
+	appid := beego.AppConfig.String("weixin::appid")
 
 	//https://developers.weixin.qq.com/miniprogram/dev/api-backend/auth.code2Session.html
 	req := httplib.Get("https://api.weixin.qq.com/sns/jscode2session")
 	req.Param("grant_type", "authorization_code")
 	req.Param("js_code", code)
-	req.Param("secret", config.Wx.Secret)
-	req.Param("appid", config.Wx.Appid)
+	req.Param("secret", secret)
+	req.Param("appid", appid)
 
 	var res WXLoginResponse
 	req.ToJSON(&res)
