@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
+	"github.com/moshopserver/utils"
 )
 
 type IndexController struct {
@@ -89,10 +90,12 @@ func (this *IndexController) Index_Index() {
 		var mapids []orm.Params
 		o.QueryTable(category).Filter("parent_id", categoryItem.Id).Values(&mapids, "id")
 
-		var valIds []int64
-		for _, value := range mapids {
-			valIds = append(valIds, value["Id"].(int64))
-		}
+		// var valIds []int64
+		// for _, value := range mapids {
+		// 	valIds = append(valIds, value["Id"].(int64))
+		// }
+
+		valIds := utils.ExactMapValues2Int64Array(mapids, "Id")
 
 		var categorygoods []orm.Params
 		o.QueryTable(goods).Filter("category_id__in", valIds).Limit(7).Values(&categorygoods, "id", "name", "list_pic_url", "retail_price")

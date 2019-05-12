@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/astaxie/beego/orm"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -39,4 +41,35 @@ func GetTimestamp() int64 {
 func FormatTimestamp(timestamp int64) string {
 	tm := time.Unix(timestamp, 0)
 	return tm.Format("2006-01-02 03:04:05 PM")
+}
+
+func ExactMapValues2Int64Array(maparray []orm.Params, key string) []int64 {
+
+	var vals []int64
+	for _, value := range maparray {
+		vals = append(vals, value[key].(int64))
+	}
+	return vals
+}
+
+type PageData struct {
+	NumsPerPage int
+	CurrentPage int
+	Count       int
+	TotalPages  int
+	Data        interface{}
+}
+
+//page begins from 1
+func GetPageData(rawData []orm.Params, page int, size int) PageData {
+
+	count := len(rawData)
+	totalpages := (count + size - 1) / size
+	var pagedata []orm.Params
+
+	for idx := (page - 1) * size; idx < page*size && idx < count; idx++ {
+		pagedata = append(pagedata, rawData[idx])
+	}
+
+	return PageData{NumsPerPage: size, CurrentPage: page, Count: count, TotalPages: totalpages, Data: pagedata}
 }

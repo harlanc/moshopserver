@@ -60,6 +60,36 @@ type Comment struct {
 	Data  CommentInfo
 }
 
+type FilterCategory struct {
+	Id      int
+	Name    string
+	Checked bool
+}
+
+type ListRtnJson struct {
+	utils.PageData
+	FilterCategories []FilterCategory
+	GoodsList        []orm.Params
+}
+
+type Banner struct {
+	Url     string
+	Name    string
+	Img_url string
+}
+
+type NewRtnJson struct {
+	BannerInfo Banner
+}
+
+type HotRtnJson struct {
+	BannerInfo Banner
+}
+
+type CountRtnJson struct {
+	GoodsCount int64
+}
+
 func (this *GoodsController) Goods_Index() {
 	o := orm.NewOrm()
 
@@ -150,7 +180,7 @@ func (this *GoodsController) Goods_Detail() {
 	commentval := Comment{Count: commentCount, Data: commentInfo}
 	loginuserid := utils.String2Int(getLoginUserId())
 
-	userhascollect := isUserHasCollect(loginuserid, 0, intGoodsId)
+	userhascollect := models.IsUserHasCollect(loginuserid, 0, intGoodsId)
 
 	models.AddFootprint(loginuserid, intGoodsId)
 
@@ -204,9 +234,218 @@ func (this *GoodsController) Goods_List() {
 	sort := this.GetString("sort")
 	order := this.GetString("order")
 
+	o := orm.NewOrm()
+	goodstable := new(models.NideshopGoods)
+	rs := o.QueryTable(goodstable)
+
+	if isNew != "" {
+		rs = rs.Filter("is_new", isNew)
+	}
+	if isHot != "" {
+		rs = rs.Filter("is_hot", isHot)
+	}
+
+	if keyword != "" {
+		rs = rs.Filter("icontains", keyword)
+		searchhistory := models.NideshopSearchHistory{Keyword: keyword, UserId: getLoginUserId(),
+			AddTime: utils.GetTimestamp()}
+		o.Insert(&searchhistory)
+	}
+	if brandId != "" {
+		rs = rs.Filter("brand_id", brandId)
+	}
+
+	var categoryids []orm.Params
+	rs.Limit(10000).Values(&categoryids, "category_id")
+	categoryintids := utils.ExactMapValues2Int64Array(categoryids, "Id")
+
+	var filterCategories = []FilterCategory{FilterCategory{Id: 0, Name: "全部", Checked: false}}
+
+	if len(categoryintids) > 0 {
+		var parentids []orm.Params
+		categorytable := new(models.NideshopCategory)
+		o.QueryTable(categorytable).Filter("id__in", categoryintids).Limit(10000).Values(&parentids, "parent_id")
+		parentintids := utils.ExactMapValues2Int64Array(parentids, "ParentId")
+
+		var parentcategories []orm.Params
+		o.QueryTable(categorytable).Filter("id__in", parentintids).OrderBy("sort_order").Values(&parentcategories, "id", "name")
+
+		for _, value := range parentcategories {
+			id := value["id"].(int)
+			checked := (categoryId == "" && id == 0)
+			filterId := utils.String2Int(categoryId)
+
+			filterCategories = append(filterCategories, FilterCategory{Id: filterId, Name: value["name"].(string), Checked: checked})
+		}
+	}
+
+	if categoryId != "" {
+		intcategoryId := utils.String2Int(categoryId)
+		if intcategoryId > 0 {
+			rs = rs.Filter("category_id__in", models.GetCategoryWhereIn(intcategoryId))
+		}
+	}
+
+	if sort == "price" {
+		orderstr := "retail_price"
+		if order == "desc" {
+			orderstr = "-" + orderstr
+		}
+		rs = rs.OrderBy(orderstr)
+	} else {
+		rs = rs.OrderBy("-id")
+	}
+
+	var rawData []orm.Params
+	rs.Values(&rawData, "id", "name", "list_pic_url", "retail_price")
+
+	intPage := utils.String2Int(page)
+	intSize := utils.String2Int(size)
+
+	pageData := utils.GetPageData(rawData, intPage, intSize)
+
+	data, err := json.Marshal(ListRtnJson{PageData: pageData, FilterCategories: filterCategories, GoodsList: pageData.Data.([]orm.Params)})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
 }
 
-func (this *GoodsController) getLoginUserId() {
-	//	return this.Ctx.UserId
+func (this *GoodsController) Goods_Filter() {
+
+	categoryId := this.GetString("categoryId")
+	keyword := this.GetString("keyword")
+	isNew := this.GetString("isNew")
+	isHot := this.GetString("isHot")
+
+	o := orm.NewOrm()
+	goodstable := new(models.NideshopGoods)
+	rs := o.QueryTable(goodstable)
+
+	if categoryId != "" {
+		intcategoryId := utils.String2Int(categoryId)
+		rs = rs.Filter("category_id__in", models.GetChildCategoryId(intcategoryId))
+	}
+
+	if isNew != "" {
+		rs = rs.Filter("is_new", isNew)
+	}
+	if isHot != "" {
+		rs = rs.Filter("is_hot", isHot)
+	}
+
+	if keyword != "" {
+		rs = rs.Filter("icontains", keyword)
+	}
+
+	var filterCategories = []FilterCategory{FilterCategory{Id: 0, Name: "全部"}}
+
+	var categoryids []orm.Params
+	rs.Limit(10000).Values(&categoryids, "category_id")
+	categoryintids := utils.ExactMapValues2Int64Array(categoryids, "Id")
+
+	if len(categoryintids) > 0 {
+
+		var parentids []orm.Params
+		categorytable := new(models.NideshopCategory)
+		o.QueryTable(categorytable).Filter("id__in", categoryintids).Limit(10000).Values(&parentids, "parent_id")
+		parentintids := utils.ExactMapValues2Int64Array(parentids, "ParentId")
+
+		var parentcategories []orm.Params
+		rs.OrderBy("sort_order").Filter("id__in", parentintids).Values(&parentcategories, "id", "name")
+
+		for _, value := range parentcategories {
+			id := value["id"].(int)
+			filterCategories = append(filterCategories, FilterCategory{Id: id, Name: value["name"].(string)})
+		}
+
+	}
+
+	data, err := json.Marshal(filterCategories)
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+}
+
+func (this *GoodsController) Goods_New() {
+
+	banner := Banner{Url: "", Name: "坚持初心，为你寻觅世间好物", Img_url: "http://yanxuan.nosdn.127.net/8976116db321744084774643a933c5ce.png"}
+	data, err := json.Marshal(NewRtnJson{BannerInfo: banner})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
 
 }
+
+func (this *GoodsController) Goods_Hot() {
+
+	banner := Banner{Url: "", Name: "大家都在买的严选好物", Img_url: "http://yanxuan.nosdn.127.net/8976116db321744084774643a933c5ce.png"}
+	data, err := json.Marshal(HotRtnJson{BannerInfo: banner})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+}
+
+func (this *GoodsController) Goods_Related() {
+
+	goodsId := this.GetString("id")
+
+	o := orm.NewOrm()
+	relatedgoodstable := new(models.NideshopRelatedGoods)
+	var rgids []orm.Params
+	o.QueryTable(relatedgoodstable).Filter("goods_id", utils.String2Int(goodsId)).Values(&rgids, "related_goods_id")
+	rgintids := utils.ExactMapValues2Int64Array(rgids, "RelatedGoodsId")
+
+	goodstable := new(models.NideshopGoods)
+	var relatedgoods []orm.Params
+
+	if len(rgids) == 0 {
+		var goodscategory models.NideshopGoods
+		o.QueryTable(goodstable).Filter("id", goodsId).One(&goodscategory)
+		o.QueryTable(goodstable).Filter("category_id", goodscategory.CategoryId).Limit(8).Values(&relatedgoods, "id", "name", "list_pic_url", "retail_price")
+
+	} else {
+		o.QueryTable(goodstable).Filter("id__in", rgintids).Values(&relatedgoods, "id", "name", "list_pic_url", "retail_price")
+	}
+
+	data, err := json.Marshal(relatedgoods)
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+}
+
+func (this *GoodsController) Goods_Count() {
+
+	o := orm.NewOrm()
+	goodstable := new(models.NideshopGoods)
+
+	count, _ := o.QueryTable(goodstable).Filter("is_delete", 0).Filter("is_on_sale", 1).Count()
+
+	data, err := json.Marshal(CountRtnJson{GoodsCount: count})
+	if err != nil {
+		this.Data["json"] = err
+	} else {
+		this.Data["json"] = json.RawMessage(string(data))
+	}
+	this.ServeJSON()
+
+}
+
+// func (this *GoodsController) getLoginUserId() {
+// 	//	return this.Ctx.UserId
+
+// }

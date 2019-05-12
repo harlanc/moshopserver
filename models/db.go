@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/astaxie/beego/orm"
-	//_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type NideshopAd struct {
@@ -350,7 +350,7 @@ type NideshopRelatedGoods struct {
 }
 
 type NideshopSearchHistory struct {
-	AddTime int    `orm:"not null default 0 comment('搜索时间') INT(11)"`
+	AddTime int64  `orm:"not null default 0 comment('搜索时间') INT(11)"`
 	From    string `orm:"not null default '' comment('搜索来源，如PC、小程序、APP等') VARCHAR(45)"`
 	Id      int    `orm:"not null pk autoincr INT(10)"`
 	Keyword string `orm:"not null CHAR(50)"`
