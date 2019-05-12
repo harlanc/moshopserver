@@ -163,7 +163,6 @@ func (this *GoodsController) Goods_Detail() {
 	var commentInfo CommentInfo
 
 	if &hotcommentone != nil {
-
 		user := new(models.NideshopUser)
 		var commentUsers []orm.Params
 		o.QueryTable(user).Filter("id", hotcommentone.UserId).Values(&commentUsers, "nickname", "username", "avatar")
@@ -174,7 +173,6 @@ func (this *GoodsController) Goods_Detail() {
 		o.QueryTable(commentpicture).Filter("comment_id", hotcommentone.Id).All(&commentpictures)
 
 		commentInfo = CommentInfo{Content: string(content), AddTime: hotcommentone.AddTime, NickName: user.Nickname, Avatar: user.Avatar, PicList: commentpictures}
-
 	}
 
 	commentval := Comment{Count: commentCount, Data: commentInfo}
@@ -244,7 +242,6 @@ func (this *GoodsController) Goods_List() {
 	if isHot != "" {
 		rs = rs.Filter("is_hot", isHot)
 	}
-
 	if keyword != "" {
 		rs = rs.Filter("icontains", keyword)
 		searchhistory := models.NideshopSearchHistory{Keyword: keyword, UserId: getLoginUserId(),
@@ -328,14 +325,12 @@ func (this *GoodsController) Goods_Filter() {
 		intcategoryId := utils.String2Int(categoryId)
 		rs = rs.Filter("category_id__in", models.GetChildCategoryId(intcategoryId))
 	}
-
 	if isNew != "" {
 		rs = rs.Filter("is_new", isNew)
 	}
 	if isHot != "" {
 		rs = rs.Filter("is_hot", isHot)
 	}
-
 	if keyword != "" {
 		rs = rs.Filter("icontains", keyword)
 	}
@@ -360,9 +355,7 @@ func (this *GoodsController) Goods_Filter() {
 			id := value["id"].(int)
 			filterCategories = append(filterCategories, FilterCategory{Id: id, Name: value["name"].(string)})
 		}
-
 	}
-
 	data, err := json.Marshal(filterCategories)
 	if err != nil {
 		this.Data["json"] = err
