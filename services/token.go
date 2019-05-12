@@ -16,15 +16,12 @@ type CustomClaims struct {
 func GetUserID(tokenstr string) string {
 
 	token := Parse(tokenstr)
-
 	if token == nil {
 		return ""
 	}
-
 	if claims, ok := token.Claims.(*CustomClaims); ok {
 		return claims.UserID
 	}
-
 	return ""
 }
 
