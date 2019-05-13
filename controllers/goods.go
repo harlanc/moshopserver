@@ -176,7 +176,7 @@ func (this *GoodsController) Goods_Detail() {
 	}
 
 	commentval := Comment{Count: commentCount, Data: commentInfo}
-	loginuserid := utils.String2Int(getLoginUserId())
+	loginuserid := getLoginUserId()
 
 	userhascollect := models.IsUserHasCollect(loginuserid, 0, intGoodsId)
 
@@ -244,7 +244,7 @@ func (this *GoodsController) Goods_List() {
 	}
 	if keyword != "" {
 		rs = rs.Filter("icontains", keyword)
-		searchhistory := models.NideshopSearchHistory{Keyword: keyword, UserId: getLoginUserId(),
+		searchhistory := models.NideshopSearchHistory{Keyword: keyword, UserId: utils.Int2String(getLoginUserId()),
 			AddTime: utils.GetTimestamp()}
 		o.Insert(&searchhistory)
 	}
@@ -438,7 +438,7 @@ func (this *GoodsController) Goods_Count() {
 
 }
 
-// func (this *GoodsController) getLoginUserId() {
+// func (this *GoodsController) c() {
 // 	//	return this.Ctx.UserId
 
 // }

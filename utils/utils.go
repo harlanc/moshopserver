@@ -52,6 +52,15 @@ func ExactMapValues2Int64Array(maparray []orm.Params, key string) []int64 {
 	return vals
 }
 
+func ExactMapValues2StringArray(maparray []orm.Params, key string) []string {
+
+	var vals []string
+	for _, value := range maparray {
+		vals = append(vals, value[key].(string))
+	}
+	return vals
+}
+
 type PageData struct {
 	NumsPerPage int
 	CurrentPage int

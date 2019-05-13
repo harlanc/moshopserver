@@ -90,10 +90,10 @@ type NideshopCart struct {
 	GoodsSpecifitionNameValue string `orm:"not null comment('规格属性组成的字符串，用来显示用') TEXT"`
 	Id                        int    `orm:"not null pk autoincr MEDIUMINT(8)"`
 	ListPicUrl                string `orm:"not null default '' VARCHAR(255)"`
-	MarketPrice               string `orm:"not null default 0.00 DECIMAL(10,2)"`
+	MarketPrice               int    `orm:"not null default 0.00 DECIMAL(10,2)"`
 	Number                    int    `orm:"not null default 0 SMALLINT(5)"`
 	ProductId                 int    `orm:"not null default 0 MEDIUMINT(8)"`
-	RetailPrice               string `orm:"not null default 0.00 DECIMAL(10,2)"`
+	RetailPrice               int    `orm:"not null default 0.00 DECIMAL(10,2)"`
 	SessionId                 string `orm:"not null default '' index CHAR(32)"`
 	UserId                    int    `orm:"not null default 0 MEDIUMINT(8)"`
 }
@@ -203,7 +203,7 @@ type NideshopGoods struct {
 	GoodsUnit         string `json:"goods_unit"`
 	Id                int    `json:"id"`
 	IsAppExclusive    int    `json:"is_app_exclusive"`
-	IsDelete          int    `json:"is_delete"`
+	IsDelete          bool   `json:"is_delete"`
 	IsHot             int    `json:"is_hot"`
 	IsLimited         int    `json:"is_limited"`
 	IsNew             int    `json:"is_new"`
@@ -332,7 +332,7 @@ type NideshopProduct struct {
 	GoodsSn               string `orm:"not null default '' VARCHAR(60)"`
 	GoodsSpecificationIds string `orm:"not null default '' VARCHAR(50)"`
 	Id                    int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	RetailPrice           string `orm:"not null default 0.00 DECIMAL(10,2)"`
+	RetailPrice           int    `orm:"not null default 0.00 DECIMAL(10,2)"`
 }
 
 type NideshopRegion struct {
