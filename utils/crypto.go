@@ -3,6 +3,9 @@ package utils
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
 )
 
 func PKCS7UnPadding(origData []byte) []byte {
@@ -33,4 +36,19 @@ func AesCBCDecrypt(encryptData, key, iv []byte) ([]byte, error) {
 	mode.CryptBlocks(decryptedData, encryptData)
 	decryptedData = PKCS7UnPadding(decryptedData)
 	return decryptedData, nil
+}
+
+func Md5(str string) string {
+	h := md5.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func Base64Encode(str string) string {
+	return base64.StdEncoding.EncodeToString([]byte(str))
+}
+
+func Base64Decode(str string) string {
+	decodestr, _ := base64.StdEncoding.DecodeString(str)
+	return string(decodestr)
 }

@@ -69,7 +69,6 @@ type PageData struct {
 	Data        interface{}
 }
 
-//page begins from 1
 func GetPageData(rawData []orm.Params, page int, size int) PageData {
 
 	count := len(rawData)
