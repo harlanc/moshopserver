@@ -106,7 +106,6 @@ func (this *IndexController) Index_Index() {
 	data, err := json.Marshal(IndexRtnJson{banners, channels, newgoods, hotgoods, brandList, topicList, newList})
 	if err != nil {
 		this.Data["json"] = err
-
 	} else {
 		this.Data["json"] = json.RawMessage(string(data))
 	}

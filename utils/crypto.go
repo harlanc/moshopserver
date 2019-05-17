@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"net/url"
 )
 
 func PKCS7UnPadding(origData []byte) []byte {
@@ -51,4 +52,12 @@ func Base64Encode(str string) string {
 func Base64Decode(str string) string {
 	decodestr, _ := base64.StdEncoding.DecodeString(str)
 	return string(decodestr)
+}
+
+func UrlEncode(str string) (string, error) {
+	u, err := url.Parse(str)
+	if err != nil {
+		return "", err
+	}
+	return u.String(), nil
 }
