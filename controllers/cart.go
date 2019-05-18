@@ -16,9 +16,9 @@ type CartController struct {
 
 type CartTotal struct {
 	GoodsCount         int
-	GoodsAmount        int
+	GoodsAmount        float64
 	CheckedGoodsCount  int
-	CheckedGoodsAmount int
+	CheckedGoodsAmount float64
 }
 type GoodsCount struct {
 	CartTotal CartTotal
@@ -41,16 +41,16 @@ func getCart() IndexCartData {
 	o.QueryTable(carttable).Filter("user_id", getLoginUserId()).Filter("session_id", 1).All(carts)
 
 	var goodsCount int
-	var goodsAmount int
+	var goodsAmount float64
 	var checkedGoodsCount int
-	var checkedGoodsAmount int
+	var checkedGoodsAmount float64
 
 	for _, val := range carts {
 		goodsCount += val.Number
-		goodsAmount += val.Number * val.RetailPrice
+		goodsAmount += float64(val.Number) * val.RetailPrice
 		if val.Checked == 0 {
 			checkedGoodsCount += val.Number
-			checkedGoodsAmount += val.Number * val.RetailPrice
+			checkedGoodsAmount += float64(val.Number) * val.RetailPrice
 		}
 
 		goodstable := new(models.NideshopGoods)
@@ -306,14 +306,14 @@ type CartAddress struct {
 
 type CheckoutRtnJson struct {
 	Address          CartAddress
-	FreightPrice     int
+	FreightPrice     float64
 	CheckedCoupon    []models.NideshopUserCoupon
 	CouponList       []models.NideshopUserCoupon
-	CouponPrice      int
+	CouponPrice      float64
 	CheckedGoodsList []models.NideshopCart
-	GoodsTotalPrice  int
-	OrderTotalPrice  int
-	ActualPrice      int
+	GoodsTotalPrice  float64
+	OrderTotalPrice  float64
+	ActualPrice      float64
 }
 
 func (this *CartController) Cart_Checkout() {
@@ -338,7 +338,7 @@ func (this *CartController) Cart_Checkout() {
 		address.FullRegion = address.ProviceName + address.CityName + address.DistrictName
 	}
 
-	var freightPrice int = 0.0
+	var freightPrice float64 = 0.0
 	cartData := getCart()
 	var checkedgoodslist []models.NideshopCart
 	for _, val := range cartData.CartList {
@@ -347,7 +347,7 @@ func (this *CartController) Cart_Checkout() {
 		}
 	}
 
-	var couponPrice int = 0.0
+	var couponPrice float64 = 0.0
 
 	goodstotalprice := cartData.CartTotal.CheckedGoodsAmount
 	ordertotalprice := cartData.CartTotal.CheckedGoodsAmount + freightPrice - couponPrice

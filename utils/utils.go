@@ -38,9 +38,9 @@ func GetTimestamp() int64 {
 }
 
 //the result likes 2015-02-08 10:19:39 AM
-func FormatTimestamp(timestamp int64) string {
+func FormatTimestamp(timestamp int64, format string) string {
 	tm := time.Unix(timestamp, 0)
-	return tm.Format("2006-01-02 03:04:05 PM")
+	return tm.Format(format)
 }
 
 func ExactMapValues2Int64Array(maparray []orm.Params, key string) []int64 {

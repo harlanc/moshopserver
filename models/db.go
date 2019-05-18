@@ -82,20 +82,20 @@ type NideshopBrand struct {
 }
 
 type NideshopCart struct {
-	Checked                   int    `orm:"not null default 1 TINYINT(1)"`
-	GoodsId                   int    `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsName                 string `orm:"not null default '' VARCHAR(120)"`
-	GoodsSn                   string `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecifitionIds       string `orm:"not null default '' comment('product表对应的goods_specifition_ids') VARCHAR(60)"`
-	GoodsSpecifitionNameValue string `orm:"not null comment('规格属性组成的字符串，用来显示用') TEXT"`
-	Id                        int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	ListPicUrl                string `orm:"not null default '' VARCHAR(255)"`
-	MarketPrice               int    `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Number                    int    `orm:"not null default 0 SMALLINT(5)"`
-	ProductId                 int    `orm:"not null default 0 MEDIUMINT(8)"`
-	RetailPrice               int    `orm:"not null default 0.00 DECIMAL(10,2)"`
-	SessionId                 string `orm:"not null default '' index CHAR(32)"`
-	UserId                    int    `orm:"not null default 0 MEDIUMINT(8)"`
+	Checked                   int     `orm:"not null default 1 TINYINT(1)"`
+	GoodsId                   int     `orm:"not null default 0 MEDIUMINT(8)"`
+	GoodsName                 string  `orm:"not null default '' VARCHAR(120)"`
+	GoodsSn                   string  `orm:"not null default '' VARCHAR(60)"`
+	GoodsSpecifitionIds       string  `orm:"not null default '' comment('product表对应的goods_specifition_ids') VARCHAR(60)"`
+	GoodsSpecifitionNameValue string  `orm:"not null comment('规格属性组成的字符串，用来显示用') TEXT"`
+	Id                        int     `orm:"not null pk autoincr MEDIUMINT(8)"`
+	ListPicUrl                string  `orm:"not null default '' VARCHAR(255)"`
+	MarketPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	Number                    int     `orm:"not null default 0 SMALLINT(5)"`
+	ProductId                 int     `orm:"not null default 0 MEDIUMINT(8)"`
+	RetailPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	SessionId                 string  `orm:"not null default '' index CHAR(32)"`
+	UserId                    int     `orm:"not null default 0 MEDIUMINT(8)"`
 }
 
 type NideshopCategory struct {
@@ -263,36 +263,36 @@ type NideshopKeywords struct {
 }
 
 type NideshopOrder struct {
-	ActualPrice    string `orm:"not null default 0.00 comment('实际需要支付的金额') DECIMAL(10,2)"`
-	AddTime        int    `orm:"not null default 0 INT(11)"`
-	Address        string `orm:"not null default '' VARCHAR(255)"`
-	CallbackStatus string `orm:"default 'true' ENUM('false','true')"`
-	City           int    `orm:"not null default 0 SMALLINT(5)"`
-	ConfirmTime    int    `orm:"not null default 0 INT(11)"`
-	Consignee      string `orm:"not null default '' VARCHAR(60)"`
-	Country        int    `orm:"not null default 0 SMALLINT(5)"`
-	CouponId       int    `orm:"not null default 0 comment('使用的优惠券id') MEDIUMINT(8)"`
-	CouponPrice    string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	District       int    `orm:"not null default 0 SMALLINT(5)"`
-	FreightPrice   int    `orm:"not null default 0 comment('配送费用') INT(10)"`
-	GoodsPrice     string `orm:"not null default 0.00 comment('商品总价') DECIMAL(10,2)"`
-	Id             int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	Integral       int    `orm:"not null default 0 INT(10)"`
-	IntegralMoney  string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Mobile         string `orm:"not null default '' VARCHAR(60)"`
-	OrderPrice     string `orm:"not null default 0.00 comment('订单总价') DECIMAL(10,2)"`
-	OrderSn        string `orm:"not null default '' unique VARCHAR(20)"`
-	OrderStatus    int    `orm:"not null default 0 index TINYINT(1)"`
-	ParentId       int    `orm:"not null default 0 MEDIUMINT(8)"`
-	PayId          int    `orm:"not null default 0 index TINYINT(3)"`
-	PayName        string `orm:"not null default '' VARCHAR(120)"`
-	PayStatus      int    `orm:"not null default 0 index TINYINT(1)"`
-	PayTime        int    `orm:"not null default 0 INT(11)"`
-	Postscript     string `orm:"not null default '' VARCHAR(255)"`
-	Province       int    `orm:"not null default 0 SMALLINT(5)"`
-	ShippingFee    string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	ShippingStatus int    `orm:"not null default 0 index TINYINT(1)"`
-	UserId         int    `orm:"not null default 0 index MEDIUMINT(8)"`
+	ActualPrice    float64 `orm:"not null default 0.00 comment('实际需要支付的金额') DECIMAL(10,2)"`
+	AddTime        int64   `orm:"not null default 0 INT(11)"`
+	Address        string  `orm:"not null default '' VARCHAR(255)"`
+	CallbackStatus string  `orm:"default 'true' ENUM('false','true')"`
+	City           int     `orm:"not null default 0 SMALLINT(5)"`
+	ConfirmTime    int     `orm:"not null default 0 INT(11)"`
+	Consignee      string  `orm:"not null default '' VARCHAR(60)"`
+	Country        int     `orm:"not null default 0 SMALLINT(5)"`
+	CouponId       int     `orm:"not null default 0 comment('使用的优惠券id') MEDIUMINT(8)"`
+	CouponPrice    float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	District       int     `orm:"not null default 0 SMALLINT(5)"`
+	FreightPrice   float64 `orm:"not null default 0 comment('配送费用') INT(10)"`
+	GoodsPrice     float64 `orm:"not null default 0.00 comment('商品总价') DECIMAL(10,2)"`
+	Id             int     `orm:"not null pk autoincr MEDIUMINT(8)"`
+	Integral       int     `orm:"not null default 0 INT(10)"`
+	IntegralMoney  string  `orm:"not null default 0.00 DECIMAL(10,2)"`
+	Mobile         string  `orm:"not null default '' VARCHAR(60)"`
+	OrderPrice     float64 `orm:"not null default 0.00 comment('订单总价') DECIMAL(10,2)"`
+	OrderSn        string  `orm:"not null default '' unique VARCHAR(20)"`
+	OrderStatus    int     `orm:"not null default 0 index TINYINT(1)"`
+	ParentId       int     `orm:"not null default 0 MEDIUMINT(8)"`
+	PayId          int     `orm:"not null default 0 index TINYINT(3)"`
+	PayName        string  `orm:"not null default '' VARCHAR(120)"`
+	PayStatus      int     `orm:"not null default 0 index TINYINT(1)"`
+	PayTime        int     `orm:"not null default 0 INT(11)"`
+	Postscript     string  `orm:"not null default '' VARCHAR(255)"`
+	Province       int     `orm:"not null default 0 SMALLINT(5)"`
+	ShippingFee    string  `orm:"not null default 0.00 DECIMAL(10,2)"`
+	ShippingStatus int     `orm:"not null default 0 index TINYINT(1)"`
+	UserId         int     `orm:"not null default 0 index MEDIUMINT(8)"`
 }
 
 type NideshopOrderExpress struct {
@@ -311,28 +311,28 @@ type NideshopOrderExpress struct {
 }
 
 type NideshopOrderGoods struct {
-	GoodsId                   int    `orm:"not null default 0 index MEDIUMINT(8)"`
-	GoodsName                 string `orm:"not null default '' VARCHAR(120)"`
-	GoodsSn                   string `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecifitionIds       string `orm:"not null default '' VARCHAR(255)"`
-	GoodsSpecifitionNameValue string `orm:"not null TEXT"`
-	Id                        int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsReal                    int    `orm:"not null default 0 TINYINT(1)"`
-	ListPicUrl                string `orm:"not null default '' VARCHAR(255)"`
-	MarketPrice               string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Number                    int    `orm:"not null default 1 SMALLINT(5)"`
-	OrderId                   int    `orm:"not null default 0 index MEDIUMINT(8)"`
-	ProductId                 int    `orm:"not null default 0 MEDIUMINT(8)"`
-	RetailPrice               string `orm:"not null default 0.00 DECIMAL(10,2)"`
+	GoodsId                   int     `orm:"not null default 0 index MEDIUMINT(8)"`
+	GoodsName                 string  `orm:"not null default '' VARCHAR(120)"`
+	GoodsSn                   string  `orm:"not null default '' VARCHAR(60)"`
+	GoodsSpecifitionIds       string  `orm:"not null default '' VARCHAR(255)"`
+	GoodsSpecifitionNameValue string  `orm:"not null TEXT"`
+	Id                        int     `orm:"not null pk autoincr MEDIUMINT(8)"`
+	IsReal                    int     `orm:"not null default 0 TINYINT(1)"`
+	ListPicUrl                string  `orm:"not null default '' VARCHAR(255)"`
+	MarketPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	Number                    int     `orm:"not null default 1 SMALLINT(5)"`
+	OrderId                   int     `orm:"not null default 0 index MEDIUMINT(8)"`
+	ProductId                 int     `orm:"not null default 0 MEDIUMINT(8)"`
+	RetailPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
 }
 
 type NideshopProduct struct {
-	GoodsId               int    `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsNumber           int    `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsSn               string `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecificationIds string `orm:"not null default '' VARCHAR(50)"`
-	Id                    int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	RetailPrice           int    `orm:"not null default 0.00 DECIMAL(10,2)"`
+	GoodsId               int     `orm:"not null default 0 MEDIUMINT(8)"`
+	GoodsNumber           int     `orm:"not null default 0 MEDIUMINT(8)"`
+	GoodsSn               string  `orm:"not null default '' VARCHAR(60)"`
+	GoodsSpecificationIds string  `orm:"not null default '' VARCHAR(50)"`
+	Id                    int     `orm:"not null pk autoincr MEDIUMINT(8)"`
+	RetailPrice           float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
 }
 
 type NideshopRegion struct {
