@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
 	"github.com/moshopserver/utils"
+	"github.com/objcoding/wxpay"
 )
 
 type WXLoginResponse struct {
@@ -78,11 +79,11 @@ func Login(code string, fullUserInfo string) *WXUserInfo {
 	}
 	userinfo := DecryptUserInfoData(res.SessionKey, resUserInfo.EncryptedData, resUserInfo.IV)
 
-	return &userinfo
+	return userinfo
 
 }
 
-func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) WXUserInfo {
+func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) *WXUserInfo {
 
 	sk, _ := base64.StdEncoding.DecodeString(sessionKey)
 	ed, _ := base64.StdEncoding.DecodeString(encryptedData)
@@ -91,7 +92,7 @@ func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) WXU
 	decryptedData, err := utils.AesCBCDecrypt(ed, sk, i)
 
 	if err != nil {
-
+		return nil
 	}
 
 	var wxuserinfo WXUserInfo
@@ -99,5 +100,32 @@ func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) WXU
 	if err != nil {
 
 	}
-	return wxuserinfo
+	return &wxuserinfo
+}
+
+type PayInfo struct {
+	OpenId         string
+	Body           string
+	OutTradeNo     string
+	TotalFee       int64
+	SpbillCreateIp string
+}
+
+func CreateUnifiedOrder(payinfo PayInfo) (wxpay.Params, error) {
+
+	appid := beego.AppConfig.String("weixin::appid")
+	mchid := beego.AppConfig.String("weixin::mch_id")
+	apikey := beego.AppConfig.String("weixin::apikey")
+	notifyurl := beego.AppConfig.String("weixin::notify_url")
+	account := wxpay.NewAccount(appid, mchid, apikey, false)
+	client := wxpay.NewClient(account)
+	params := make(wxpay.Params)
+	params.SetString("body", payinfo.Body).
+		SetString("out_trade_no", payinfo.OutTradeNo).
+		SetInt64("total_fee", payinfo.TotalFee).
+		SetString("spbill_create_ip", payinfo.SpbillCreateIp).
+		SetString("notify_url", notifyurl).
+		SetString("trade_type", "APP")
+	return client.UnifiedOrder(params)
+
 }

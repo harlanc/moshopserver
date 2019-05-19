@@ -125,12 +125,12 @@ type NideshopChannel struct {
 }
 
 type NideshopCollect struct {
-	AddTime     int `orm:"not null default 0 INT(11)"`
-	Id          int `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsAttention int `orm:"not null default 0 comment('是否是关注') index TINYINT(1)"`
-	TypeId      int `orm:"not null default 0 INT(2)"`
-	UserId      int `orm:"not null default 0 index MEDIUMINT(8)"`
-	ValueId     int `orm:"not null default 0 index MEDIUMINT(8)"`
+	AddTime     int64 `orm:"not null default 0 INT(11)"`
+	Id          int   `orm:"not null pk autoincr MEDIUMINT(8)"`
+	IsAttention int   `orm:"not null default 0 comment('是否是关注') index TINYINT(1)"`
+	TypeId      int   `orm:"not null default 0 INT(2)"`
+	UserId      int   `orm:"not null default 0 index MEDIUMINT(8)"`
+	ValueId     int   `orm:"not null default 0 index MEDIUMINT(8)"`
 }
 
 type NideshopComment struct {
