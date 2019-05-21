@@ -15,7 +15,7 @@ type OrderController struct {
 }
 
 //It may need to be refactored.
-func GetPageData(rawData []models.NideshopOrder, page int, size int) utils.PageData {
+func GetOrderPageData(rawData []models.NideshopOrder, page int, size int) utils.PageData {
 
 	count := len(rawData)
 	totalpages := (count + size - 1) / size
@@ -43,7 +43,7 @@ func (this *OrderController) Order_List() {
 	var orders []models.NideshopOrder
 	o.QueryTable(ordertable).Filter("user_id", getLoginUserId()).All(&orders)
 
-	firstpagedorders := GetPageData(orders, 1, 10)
+	firstpagedorders := GetOrderPageData(orders, 1, 10)
 
 	var rtnorderlist []OrderListRtnJson
 	ordergoodstable := new(models.NideshopOrderGoods)
