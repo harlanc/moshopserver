@@ -3,13 +3,18 @@ package controllers
 import (
 	"encoding/json"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
 	"github.com/moshopserver/services"
 	"github.com/moshopserver/utils"
 )
 
-func (this *CatalogController) Auth_loginByWeixin() {
+type AuthController struct {
+	beego.Controller
+}
+
+func (this *AuthController) Auth_LoginByWeixin() {
 
 	code := this.GetString("code")
 	fulluserinfo := this.GetString("userInfo")

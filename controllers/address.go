@@ -13,7 +13,7 @@ type AddressController struct {
 	beego.Controller
 }
 
-type AddressIndexRtnJson struct {
+type AddressListRtnJson struct {
 	Address      models.NideshopAddress
 	ProviceName  string
 	CityName     string
@@ -21,7 +21,7 @@ type AddressIndexRtnJson struct {
 	FullRegion   string
 }
 
-func (this *AddressController) Address_Index() {
+func (this *AddressController) Address_List() {
 
 	o := orm.NewOrm()
 	addresstable := new(models.NideshopAddress)
@@ -29,14 +29,14 @@ func (this *AddressController) Address_Index() {
 
 	o.QueryTable(addresstable).Filter("user_id", getLoginUserId()).All(&addresses)
 
-	rtnaddress := make([]AddressIndexRtnJson, 0)
+	rtnaddress := make([]AddressListRtnJson, 0)
 
 	for _, val := range addresses {
 
 		provicename := models.GetRegionName(val.ProvinceId)
 		cityname := models.GetRegionName(val.CityId)
 		distinctname := models.GetRegionName(val.DistrictId)
-		rtnaddress = append(rtnaddress, AddressIndexRtnJson{
+		rtnaddress = append(rtnaddress, AddressListRtnJson{
 			Address:      val,
 			ProviceName:  provicename,
 			CityName:     cityname,
@@ -70,7 +70,7 @@ func (this *AddressController) Address_Detail() {
 	cityname := models.GetRegionName(address.CityId)
 	distinctname := models.GetRegionName(address.DistrictId)
 
-	data, err := json.Marshal(AddressIndexRtnJson{
+	data, err := json.Marshal(AddressListRtnJson{
 		Address:      address,
 		ProviceName:  provicename,
 		CityName:     cityname,
