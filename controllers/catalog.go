@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
+	"github.com/moshopserver/utils"
 )
 
 type CatalogController struct {
@@ -17,55 +16,69 @@ type CurCategory struct {
 	SubCategoryList []models.NideshopCategory `json:"subCategoryList"`
 }
 
-type CateLogRtnJson struct {
+type CateLogIndexRtnJson struct {
 	CategoryList    []models.NideshopCategory `json:"categoryList"`
 	CurrentCategory CurCategory               `json:"currentCategory"`
 }
 
-func getCurCategory(categoryId string) CurCategory {
-
-	o := orm.NewOrm()
-
-	var currentCategory models.NideshopCategory
-	category := new(models.NideshopCategory)
-	if &categoryId != nil {
-		o.QueryTable(category).Filter("id", categoryId).One(&currentCategory)
-	}
-
-	var subCategories []models.NideshopCategory
-	o.QueryTable(category).Filter("parent_id", currentCategory.Id).All(&subCategories)
-	return CurCategory{currentCategory, subCategories}
-}
-
 func (this *CatalogController) Catalog_Index() {
+
 	categoryId := this.GetString("id")
 
 	o := orm.NewOrm()
 
 	var categories []models.NideshopCategory
-	category := new(models.NideshopCategory)
-	o.QueryTable(category).Filter("parent_id", 0).Limit(10).All(&categories)
+	categorytable := new(models.NideshopCategory)
+	o.QueryTable(categorytable).Filter("parent_id", 0).Limit(10).All(&categories)
 
-	data, err := json.Marshal(CateLogRtnJson{categories, getCurCategory(categoryId)})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
+	var currentCategory *models.NideshopCategory = nil
+
+	if categoryId != "" {
+		o.QueryTable(categorytable).Filter("id", categoryId).One(currentCategory)
 	}
+
+	if currentCategory == nil {
+		currentCategory = &categories[0]
+	}
+
+	curCategory := new(CurCategory)
+
+	if currentCategory != nil && currentCategory.Id > 0 {
+		var subCategories []models.NideshopCategory
+		o.QueryTable(categorytable).Filter("parent_id", currentCategory.Id).All(&subCategories)
+		curCategory.SubCategoryList = subCategories
+		curCategory.NideshopCategory = *currentCategory
+	}
+
+	utils.ReturnHTTPSuccess(&this.Controller, CateLogIndexRtnJson{categories, *curCategory})
 	this.ServeJSON()
 
+}
+
+type CateLogCurRtnJson struct {
+	CurrentCategory CurCategory `json:"currentCategory"`
 }
 
 func (this *CatalogController) Catalog_Current() {
 
 	categoryId := this.GetString("id")
 
-	data, err := json.Marshal(CateLogRtnJson{CurrentCategory: getCurCategory(categoryId)})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
+	o := orm.NewOrm()
+	categorytable := new(models.NideshopCategory)
+	currentCategory := new(models.NideshopCategory)
+	if categoryId != "" {
+		o.QueryTable(categorytable).Filter("id", categoryId).One(currentCategory)
 	}
+
+	curCategory := new(CurCategory)
+	if currentCategory != nil && currentCategory.Id > 0 {
+		var subCategories []models.NideshopCategory
+		o.QueryTable(categorytable).Filter("parent_id", currentCategory.Id).All(&subCategories)
+		curCategory.SubCategoryList = subCategories
+		curCategory.NideshopCategory = *currentCategory
+	}
+
+	utils.ReturnHTTPSuccess(&this.Controller, CateLogCurRtnJson{*curCategory})
 	this.ServeJSON()
 
 }

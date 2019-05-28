@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -103,12 +101,7 @@ func (this *IndexController) Index_Index() {
 		newList = append(newList, newCategoryList{categoryItem.Id, categoryItem.Name, categorygoods})
 	}
 
-	data, err := json.Marshal(IndexRtnJson{banners, channels, newgoods, hotgoods, brandList, topicList, newList})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, IndexRtnJson{banners, channels, newgoods, hotgoods, brandList, topicList, newList})
 
 	this.ServeJSON()
 
