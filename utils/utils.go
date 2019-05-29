@@ -62,11 +62,11 @@ func ExactMapValues2StringArray(maparray []orm.Params, key string) []string {
 }
 
 type PageData struct {
-	NumsPerPage int
-	CurrentPage int
-	Count       int
-	TotalPages  int
-	Data        interface{}
+	NumsPerPage int         `json:"pageSize"`
+	CurrentPage int         `json:"currentPage"`
+	Count       int         `json:"count"`
+	TotalPages  int         `json:"totalPages"`
+	Data        interface{} `json:"data"`
 }
 
 func GetPageData(rawData []orm.Params, page int, size int) PageData {

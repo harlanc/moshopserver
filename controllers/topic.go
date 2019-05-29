@@ -13,6 +13,31 @@ type TopicController struct {
 	beego.Controller
 }
 
+func updateJsonKeysTopic(vals []orm.Params) {
+
+	for _, val := range vals {
+		for k, v := range val {
+			switch k {
+			case "Id":
+				delete(val, k)
+				val["id"] = v
+			case "PriceInfo":
+				delete(val, k)
+				val["price_info"] = v
+			case "ScenePicUrl":
+				delete(val, k)
+				val["scene_pic_url"] = v
+			case "Subtitle":
+				delete(val, k)
+				val["subtitle"] = v
+			case "Title":
+				delete(val, k)
+				val["title"] = v
+			}
+		}
+	}
+}
+
 func (this *TopicController) Topic_List() {
 
 	page := this.GetString("page")
@@ -35,15 +60,11 @@ func (this *TopicController) Topic_List() {
 	topictable := new(models.NideshopTopic)
 	var topics []orm.Params
 	o.QueryTable(topictable).Values(&topics, "id", "title", "price_info", "scene_pic_url", "subtitle")
+	updateJsonKeysTopic(topics)
 
 	rtndata := utils.GetPageData(topics, intpage, intsize)
 
-	data, err := json.Marshal(rtndata)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, rtndata)
 	this.ServeJSON()
 
 }
