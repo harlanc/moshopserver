@@ -45,7 +45,7 @@ func GetSpecificationList(goodsId int) []SpecificationItem {
 	o.Raw(sql, 20).QueryRows(&specifications)
 
 	var label map[int]int
-	var specificationList []SpecificationItem
+	specificationList := make([]SpecificationItem, 0)
 	var idx int = 0
 
 	for _, item := range specifications {

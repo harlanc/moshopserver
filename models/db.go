@@ -18,46 +18,46 @@ type NideshopAd struct {
 }
 
 type NideshopAdPosition struct {
-	Desc   string `orm:"not null default '' VARCHAR(255)"`
-	Height int    `orm:"not null default 0 SMALLINT(5)"`
-	Id     int    `orm:"not null pk autoincr TINYINT(3)"`
-	Name   string `orm:"not null default '' VARCHAR(60)"`
-	Width  int    `orm:"not null default 0 SMALLINT(5)"`
+	Desc   string `json:"desc"`
+	Height int    `json:"height"`
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Width  int    `json:"width"`
 }
 
 type NideshopAddress struct {
-	Address    string `orm:"not null default '' VARCHAR(120)"`
-	CityId     int    `orm:"not null default 0 SMALLINT(5)"`
-	CountryId  int    `orm:"not null default 0 SMALLINT(5)"`
-	DistrictId int    `orm:"not null default 0 SMALLINT(5)"`
-	Id         int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsDefault  int    `orm:"not null default 0 TINYINT(1)"`
-	Mobile     string `orm:"not null default '' VARCHAR(60)"`
-	Name       string `orm:"not null default '' VARCHAR(50)"`
-	ProvinceId int    `orm:"not null default 0 SMALLINT(5)"`
-	UserId     int    `orm:"not null default 0 index MEDIUMINT(8)"`
+	Address    string `json:"address"`
+	CityId     int    `json:"city_id"`
+	CountryId  int    `json:"country_id"`
+	DistrictId int    `json:"district_id"`
+	Id         int    `json:"id"`
+	IsDefault  int    `json:"is_default"`
+	Mobile     string `json:"mobile"`
+	Name       string `json:"name"`
+	ProvinceId int    `json:"province_id"`
+	UserId     int    `json:"user_id"`
 }
 
 type NideshopAdmin struct {
-	AddTime       int    `orm:"not null default 0 INT(11)"`
-	AdminRoleId   int    `orm:"not null default 0 INT(11)"`
-	Avatar        string `orm:"not null default '''' VARCHAR(255)"`
-	Id            int    `orm:"not null pk autoincr INT(11)"`
-	LastLoginIp   string `orm:"not null default '''' VARCHAR(60)"`
-	LastLoginTime int    `orm:"not null default 0 INT(11)"`
-	Password      string `orm:"not null default '''' VARCHAR(255)"`
-	PasswordSalt  string `orm:"not null default '''' VARCHAR(255)"`
-	UpdateTime    int    `orm:"not null default 0 INT(11)"`
-	Username      string `orm:"not null default '''' VARCHAR(10)"`
+	AddTime       int    `json:"add_time"`
+	AdminRoleId   int    `json:"admin_role_id"`
+	Avatar        string `json:"avatar"`
+	Id            int    `json:"id"`
+	LastLoginIp   string `json:"last_login_ip"`
+	LastLoginTime int    `json:"last_login_time"`
+	Password      string `json:"password"`
+	PasswordSalt  string `json:"password_salt"`
+	UpdateTime    int    `json:"update_time"`
+	Username      string `json:"username"`
 }
 
 type NideshopAttribute struct {
-	AttributeCategoryId int    `orm:"not null default 0 index INT(11)"`
-	Id                  int    `orm:"not null pk autoincr INT(11)"`
-	InputType           int    `orm:"not null default 1 TINYINT(1)"`
-	Name                string `orm:"not null default '' VARCHAR(60)"`
-	SortOrder           int    `orm:"not null default 0 TINYINT(3)"`
-	Values              string `orm:"not null TEXT"`
+	AttributeCategoryId int    `json:"attribute_category_id"`
+	Id                  int    `json:"id"`
+	InputType           int    `json:"input_type"`
+	Name                string `json:"name"`
+	SortOrder           int    `json:"sort_order"`
+	Values              string `json:"values"`
 }
 
 type NideshopAttributeCategory struct {
@@ -82,20 +82,20 @@ type NideshopBrand struct {
 }
 
 type NideshopCart struct {
-	Checked                   int     `orm:"not null default 1 TINYINT(1)"`
-	GoodsId                   int     `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsName                 string  `orm:"not null default '' VARCHAR(120)"`
-	GoodsSn                   string  `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecifitionIds       string  `orm:"not null default '' comment('product表对应的goods_specifition_ids') VARCHAR(60)"`
-	GoodsSpecifitionNameValue string  `orm:"not null comment('规格属性组成的字符串，用来显示用') TEXT"`
-	Id                        int     `orm:"not null pk autoincr MEDIUMINT(8)"`
-	ListPicUrl                string  `orm:"not null default '' VARCHAR(255)"`
-	MarketPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Number                    int     `orm:"not null default 0 SMALLINT(5)"`
-	ProductId                 int     `orm:"not null default 0 MEDIUMINT(8)"`
-	RetailPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
-	SessionId                 string  `orm:"not null default '' index CHAR(32)"`
-	UserId                    int     `orm:"not null default 0 MEDIUMINT(8)"`
+	Checked                   int     `json:"checked"`
+	GoodsId                   int     `json:"goods_id"`
+	GoodsName                 string  `json:"goods_name"`
+	GoodsSn                   string  `json:"goods_sn"`
+	GoodsSpecifitionIds       string  `json:"goods_specifition_ids"`
+	GoodsSpecifitionNameValue string  `json:"goods_specifition_name_value"`
+	Id                        int     `json:"id"`
+	ListPicUrl                string  `json:"list_pic_url"`
+	MarketPrice               float64 `json:"market_price"`
+	Number                    int     `json:"number"`
+	ProductId                 int     `json:"product_id"`
+	RetailPrice               float64 `json:"retail_price"`
+	SessionId                 string  `json:"session_id"`
+	UserId                    int     `json:"user_id"`
 }
 
 type NideshopCategory struct {
@@ -125,67 +125,67 @@ type NideshopChannel struct {
 }
 
 type NideshopCollect struct {
-	AddTime     int64 `orm:"not null default 0 INT(11)"`
-	Id          int   `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsAttention int   `orm:"not null default 0 comment('是否是关注') index TINYINT(1)"`
-	TypeId      int   `orm:"not null default 0 INT(2)"`
-	UserId      int   `orm:"not null default 0 index MEDIUMINT(8)"`
-	ValueId     int   `orm:"not null default 0 index MEDIUMINT(8)"`
+	AddTime     int64 `json:"add_time"`
+	Id          int   `json:"id"`
+	IsAttention int   `json:"is_attention"`
+	TypeId      int   `json:"type_id"`
+	UserId      int   `json:"user_id"`
+	ValueId     int   `json:"value_id"`
 }
 
 type NideshopComment struct {
-	AddTime    int64  `orm:"not null default 0 BIGINT(12)"`
-	Content    string `orm:"not null comment('储存为base64编码') VARCHAR(6550)"`
-	Id         int    `orm:"not null pk autoincr INT(11)"`
-	NewContent string `orm:"not null default '' VARCHAR(6550)"`
-	Status     int    `orm:"not null default 0 TINYINT(3)"`
-	TypeId     int    `orm:"not null default 0 TINYINT(3)"`
-	UserId     int    `orm:"not null default 0 INT(11)"`
-	ValueId    int    `orm:"not null default 0 index INT(11)"`
+	AddTime    int64  `json:"add_time"`
+	Content    string `json:"content"`
+	Id         int    `json:"id"`
+	NewContent string `json:"new_content"`
+	Status     int    `json:"status"`
+	TypeId     int    `json:"type_id"`
+	UserId     int    `json:"user_id"`
+	ValueId    int    `json:"value_id"`
 }
 
 type NideshopCommentPicture struct {
-	CommentId int    `orm:"not null default 0 INT(11)"`
-	Id        int    `orm:"not null pk autoincr INT(11)"`
-	PicUrl    string `orm:"not null default '' VARCHAR(255)"`
-	SortOrder int    `orm:"not null default 5 TINYINT(1)"`
+	CommentId int    `json:"comment_id"`
+	Id        int    `json:"id"`
+	PicUrl    string `json:"pic_url"`
+	SortOrder int    `json:"sort_order"`
 }
 
 type NideshopCoupon struct {
-	Id             int    `orm:"not null pk autoincr SMALLINT(5)"`
-	MaxAmount      string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	MinAmount      string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	MinGoodsAmount string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Name           string `orm:"not null default '' VARCHAR(60)"`
-	SendEndDate    int    `orm:"not null default 0 INT(11)"`
-	SendStartDate  int    `orm:"not null default 0 INT(11)"`
-	SendType       int    `orm:"not null default 0 TINYINT(3)"`
-	TypeMoney      string `orm:"not null default 0.00 DECIMAL(10,2)"`
-	UseEndDate     int    `orm:"not null default 0 INT(11)"`
-	UseStartDate   int    `orm:"not null default 0 INT(11)"`
+	Id             int    `json:"id"`
+	MaxAmount      string `json:"max_amount"`
+	MinAmount      string `json:"min_amount"`
+	MinGoodsAmount string `json:"min_goods_amount"`
+	Name           string `json:"name"`
+	SendEndDate    int    `json:"send_end_date"`
+	SendStartDate  int    `json:"send_start_date"`
+	SendType       int    `json:"send_type"`
+	TypeMoney      string `json:"type_money"`
+	UseEndDate     int    `json:"use_end_date"`
+	UseStartDate   int    `json:"use_start_date"`
 }
 
 type NideshopFeedback struct {
-	MessageImg string `orm:"not null default '0' VARCHAR(255)"`
-	MsgArea    int    `orm:"not null default 0 TINYINT(1)"`
-	MsgContent string `orm:"not null TEXT"`
-	MsgId      int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	MsgStatus  int    `orm:"not null default 0 TINYINT(1)"`
-	MsgTime    int    `orm:"not null default 0 INT(10)"`
-	MsgTitle   string `orm:"not null default '' VARCHAR(200)"`
-	MsgType    int    `orm:"not null default 0 TINYINT(1)"`
-	OrderId    int    `orm:"not null default 0 INT(11)"`
-	ParentId   int    `orm:"not null default 0 MEDIUMINT(8)"`
-	UserEmail  string `orm:"not null default '' VARCHAR(60)"`
-	UserId     int    `orm:"not null default 0 index MEDIUMINT(8)"`
-	UserName   string `orm:"not null default '' VARCHAR(60)"`
+	MessageImg string `json:"message_img"`
+	MsgArea    int    `json:"msg_area"`
+	MsgContent string `json:"msg_content"`
+	Id         int    `json:"msg_id"`
+	MsgStatus  int    `json:"msg_status"`
+	MsgTime    int    `json:"msg_time"`
+	MsgTitle   string `json:"msg_title"`
+	MsgType    int    `json:"msg_type"`
+	OrderId    int    `json:"order_id"`
+	ParentId   int    `json:"parent_id"`
+	UserEmail  string `json:"user_email"`
+	UserId     int    `json:"user_id"`
+	UserName   string `json:"user_name"`
 }
 
 type NideshopFootprint struct {
-	AddTime int64 `orm:"not null default 0 INT(11)"`
-	GoodsId int   `orm:"not null default 0 INT(11)"`
-	Id      int   `orm:"not null pk autoincr INT(11)"`
-	UserId  int   `orm:"not null default 0 INT(11)"`
+	AddTime int64 `json:"add_time"`
+	GoodsId int   `json:"goods_id"`
+	Id      int   `json:"id"`
+	UserId  int   `json:"user_id"`
 }
 
 type NideshopGoods struct {
@@ -222,152 +222,152 @@ type NideshopGoods struct {
 }
 
 type NideshopGoodsAttribute struct {
-	AttributeId int    `orm:"not null default 0 index INT(11)"`
-	GoodsId     int    `orm:"not null default 0 index INT(11)"`
-	Id          int    `orm:"not null pk autoincr INT(11)"`
-	Value       string `orm:"not null TEXT"`
+	AttributeId int    `json:"attribute_id"`
+	GoodsId     int    `json:"goods_id"`
+	Id          int    `json:"id"`
+	Value       string `json:"value"`
 }
 
 type NideshopGoodsGallery struct {
-	GoodsId   int    `orm:"not null default 0 index INT(11)"`
-	Id        int    `orm:"not null pk autoincr INT(11)"`
-	ImgDesc   string `orm:"not null default '' VARCHAR(255)"`
-	ImgUrl    string `orm:"not null default '' VARCHAR(255)"`
-	SortOrder int    `orm:"not null default 5 INT(11)"`
+	GoodsId   int    `json:"goods_id"`
+	Id        int    `json:"id"`
+	ImgDesc   string `json:"img_desc"`
+	ImgUrl    string `json:"img_url"`
+	SortOrder int    `json:"sort_order"`
 }
 
 type NideshopGoodsIssue struct {
-	Answer   string `orm:"VARCHAR(45)"`
-	GoodsId  string `orm:"TEXT"`
-	Id       int    `orm:"not null pk autoincr INT(11)"`
-	Question string `orm:"VARCHAR(255)"`
+	Answer   string `json:"answer"`
+	GoodsId  string `json:"goods_id"`
+	Id       int    `json:"id"`
+	Question string `json:"question"`
 }
 
 type NideshopGoodsSpecification struct {
-	GoodsId         int    `orm:"not null default 0 index INT(11)"`
-	Id              int    `orm:"not null pk autoincr INT(11)"`
-	PicUrl          string `orm:"not null default '' VARCHAR(255)"`
-	SpecificationId int    `orm:"not null default 0 index INT(11)"`
-	Value           string `orm:"not null default '' VARCHAR(50)"`
+	GoodsId         int    `json:"goods_id"`
+	Id              int    `json:"id"`
+	PicUrl          string `json:"pic_url"`
+	SpecificationId int    `json:"specification_id"`
+	Value           string `json:"value"`
 }
 
 type NideshopKeywords struct {
-	Id        int    `orm:"not null pk autoincr INT(11)"`
-	IsDefault int    `orm:"not null default 0 TINYINT(1)"`
-	IsHot     int    `orm:"not null default 0 TINYINT(1)"`
-	IsShow    int    `orm:"not null default 1 TINYINT(1)"`
-	Keyword   string `orm:"not null default '' VARCHAR(90)"`
-	SchemeUrl string `orm:"not null default '' comment('关键词的跳转链接') VARCHAR(255)"`
-	SortOrder int    `orm:"not null default 100 INT(11)"`
-	Type      int    `orm:"not null default 0 INT(11)"`
+	Id        int    `json:"id"`
+	IsDefault int    `json:"is_default"`
+	IsHot     int    `json:"is_hot"`
+	IsShow    int    `json:"is_show"`
+	Keyword   string `json:"keyword"`
+	SchemeUrl string `json:"scheme_url"`
+	SortOrder int    `json:"sort_order"`
+	Type      int    `json:"type"`
 }
 
 type NideshopOrder struct {
-	ActualPrice    float64 `orm:"not null default 0.00 comment('实际需要支付的金额') DECIMAL(10,2)"`
-	AddTime        int64   `orm:"not null default 0 INT(11)"`
-	Address        string  `orm:"not null default '' VARCHAR(255)"`
-	CallbackStatus string  `orm:"default 'true' ENUM('false','true')"`
-	City           int     `orm:"not null default 0 SMALLINT(5)"`
-	ConfirmTime    int     `orm:"not null default 0 INT(11)"`
-	Consignee      string  `orm:"not null default '' VARCHAR(60)"`
-	Country        int     `orm:"not null default 0 SMALLINT(5)"`
-	CouponId       int     `orm:"not null default 0 comment('使用的优惠券id') MEDIUMINT(8)"`
-	CouponPrice    float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
-	District       int     `orm:"not null default 0 SMALLINT(5)"`
-	FreightPrice   float64 `orm:"not null default 0 comment('配送费用') INT(10)"`
-	GoodsPrice     float64 `orm:"not null default 0.00 comment('商品总价') DECIMAL(10,2)"`
-	Id             int     `orm:"not null pk autoincr MEDIUMINT(8)"`
-	Integral       int     `orm:"not null default 0 INT(10)"`
-	IntegralMoney  string  `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Mobile         string  `orm:"not null default '' VARCHAR(60)"`
-	OrderPrice     float64 `orm:"not null default 0.00 comment('订单总价') DECIMAL(10,2)"`
-	OrderSn        string  `orm:"not null default '' unique VARCHAR(20)"`
-	OrderStatus    int     `orm:"not null default 0 index TINYINT(1)"`
-	ParentId       int     `orm:"not null default 0 MEDIUMINT(8)"`
-	PayId          int     `orm:"not null default 0 index TINYINT(3)"`
-	PayName        string  `orm:"not null default '' VARCHAR(120)"`
-	PayStatus      int     `orm:"not null default 0 index TINYINT(1)"`
-	PayTime        int     `orm:"not null default 0 INT(11)"`
-	Postscript     string  `orm:"not null default '' VARCHAR(255)"`
-	Province       int     `orm:"not null default 0 SMALLINT(5)"`
-	ShippingFee    string  `orm:"not null default 0.00 DECIMAL(10,2)"`
-	ShippingStatus int     `orm:"not null default 0 index TINYINT(1)"`
-	UserId         int     `orm:"not null default 0 index MEDIUMINT(8)"`
+	ActualPrice    float64 `json:"actual_price"`
+	AddTime        int64   `json:"add_time"`
+	Address        string  `json:"address"`
+	CallbackStatus string  `json:"callback_status"`
+	City           int     `json:"city"`
+	ConfirmTime    int     `json:"confirm_time"`
+	Consignee      string  `json:"consignee"`
+	Country        int     `json:"country"`
+	CouponId       int     `json:"coupon_id"`
+	CouponPrice    float64 `json:"coupon_price"`
+	District       int     `json:"district"`
+	FreightPrice   float64 `json:"freight_price"`
+	GoodsPrice     float64 `json:"goods_price"`
+	Id             int     `json:"id"`
+	Integral       int     `json:"integral"`
+	IntegralMoney  string  `json:"integral_money"`
+	Mobile         string  `json:"mobile"`
+	OrderPrice     float64 `json:"order_price"`
+	OrderSn        string  `json:"order_sn"`
+	OrderStatus    int     `json:"order_status"`
+	ParentId       int     `json:"parent_id"`
+	PayId          int     `json:"pay_id"`
+	PayName        string  `json:"pay_name"`
+	PayStatus      int     `json:"pay_status"`
+	PayTime        int     `json:"pay_time"`
+	Postscript     string  `json:"postscript"`
+	Province       int     `json:"province"`
+	ShippingFee    string  `json:"shipping_fee"`
+	ShippingStatus int     `json:"shipping_status"`
+	UserId         int     `json:"user_id"`
 }
 
 type NideshopOrderExpress struct {
-	AddTime      int    `orm:"not null default 0 comment('添加时间') INT(11)"`
-	Id           int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsFinish     int    `orm:"not null default 0 TINYINT(1)"`
-	LogisticCode string `orm:"not null default '' comment('快递单号') VARCHAR(20)"`
-	OrderId      int    `orm:"not null default 0 index MEDIUMINT(8)"`
-	RequestCount int    `orm:"default 0 comment('总查询次数') INT(11)"`
-	RequestTime  int    `orm:"default 0 comment('最近一次向第三方查询物流信息时间') INT(11)"`
-	ShipperCode  string `orm:"not null default '' comment('物流公司代码') VARCHAR(60)"`
-	ShipperId    int    `orm:"not null default 0 MEDIUMINT(8)"`
-	ShipperName  string `orm:"not null default '' comment('物流公司名称') VARCHAR(120)"`
-	Traces       string `orm:"not null default '' comment('物流跟踪信息') VARCHAR(2000)"`
-	UpdateTime   int    `orm:"not null default 0 comment('更新时间') INT(11)"`
+	AddTime      int    `json:"add_time"`
+	Id           int    `json:"id"`
+	IsFinish     int    `json:"is_finish"`
+	LogisticCode string `json:"logistic_code"`
+	OrderId      int    `json:"order_id"`
+	RequestCount int    `json:"request_count"`
+	RequestTime  int    `json:"request_time"`
+	ShipperCode  string `json:"shipper_code"`
+	ShipperId    int    `json:"shipper_id"`
+	ShipperName  string `json:"shipper_name"`
+	Traces       string `json:"traces"`
+	UpdateTime   int    `json:"update_time"`
 }
 
 type NideshopOrderGoods struct {
-	GoodsId                   int     `orm:"not null default 0 index MEDIUMINT(8)"`
-	GoodsName                 string  `orm:"not null default '' VARCHAR(120)"`
-	GoodsSn                   string  `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecifitionIds       string  `orm:"not null default '' VARCHAR(255)"`
-	GoodsSpecifitionNameValue string  `orm:"not null TEXT"`
-	Id                        int     `orm:"not null pk autoincr MEDIUMINT(8)"`
-	IsReal                    int     `orm:"not null default 0 TINYINT(1)"`
-	ListPicUrl                string  `orm:"not null default '' VARCHAR(255)"`
-	MarketPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
-	Number                    int     `orm:"not null default 1 SMALLINT(5)"`
-	OrderId                   int     `orm:"not null default 0 index MEDIUMINT(8)"`
-	ProductId                 int     `orm:"not null default 0 MEDIUMINT(8)"`
-	RetailPrice               float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	GoodsId                   int     `json:"goods_id"`
+	GoodsName                 string  `json:"goods_name"`
+	GoodsSn                   string  `json:"goods_sn"`
+	GoodsSpecifitionIds       string  `json:"goods_specifition_ids"`
+	GoodsSpecifitionNameValue string  `json:"goods_specifition_name_value"`
+	Id                        int     `json:"id"`
+	IsReal                    int     `json:"is_real"`
+	ListPicUrl                string  `json:"list_pic_url"`
+	MarketPrice               float64 `json:"market_price"`
+	Number                    int     `json:"number"`
+	OrderId                   int     `json:"order_id"`
+	ProductId                 int     `json:"product_id"`
+	RetailPrice               float64 `json:"retail_price"`
 }
 
 type NideshopProduct struct {
-	GoodsId               int     `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsNumber           int     `orm:"not null default 0 MEDIUMINT(8)"`
-	GoodsSn               string  `orm:"not null default '' VARCHAR(60)"`
-	GoodsSpecificationIds string  `orm:"not null default '' VARCHAR(50)"`
-	Id                    int     `orm:"not null pk autoincr MEDIUMINT(8)"`
-	RetailPrice           float64 `orm:"not null default 0.00 DECIMAL(10,2)"`
+	GoodsId               int     `json:"goods_id"`
+	GoodsNumber           int     `json:"goods_number"`
+	GoodsSn               string  `json:"goods_sn"`
+	GoodsSpecificationIds string  `json:"goods_specification_ids"`
+	Id                    int     `json:"id"`
+	RetailPrice           float64 `json:"retail_price"`
 }
 
 type NideshopRegion struct {
-	AgencyId int    `orm:"not null default 0 index SMALLINT(5)"`
-	Id       int    `orm:"not null pk autoincr SMALLINT(5)"`
-	Name     string `orm:"not null default '' VARCHAR(120)"`
-	ParentId int    `orm:"not null default 0 index SMALLINT(5)"`
-	Type     int    `orm:"not null default 2 index TINYINT(1)"`
+	AgencyId int    `json:"agency_id"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	ParentId int    `json:"parent_id"`
+	Type     int    `json:"type"`
 }
 
 type NideshopRelatedGoods struct {
-	GoodsId        int `orm:"not null default 0 INT(11)"`
-	Id             int `orm:"not null pk autoincr INT(11)"`
-	RelatedGoodsId int `orm:"not null default 0 INT(11)"`
+	GoodsId        int `json:"goods_id"`
+	Id             int `json:"id"`
+	RelatedGoodsId int `json:"related_goods_id"`
 }
 
 type NideshopSearchHistory struct {
-	AddTime int64  `orm:"not null default 0 comment('搜索时间') INT(11)"`
-	From    string `orm:"not null default '' comment('搜索来源，如PC、小程序、APP等') VARCHAR(45)"`
-	Id      int    `orm:"not null pk autoincr INT(10)"`
-	Keyword string `orm:"not null CHAR(50)"`
-	UserId  string `orm:"VARCHAR(45)"`
+	AddTime int64  `json:"add_time"`
+	From    string `json:"from"`
+	Id      int    `json:"id"`
+	Keyword string `json:"keyword"`
+	UserId  string `json:"user_id"`
 }
 
 type NideshopShipper struct {
-	Code      string `orm:"not null default '' comment('快递公司代码') VARCHAR(10)"`
-	Id        int    `orm:"not null pk autoincr unique INT(11)"`
-	Name      string `orm:"not null default '' comment('快递公司名称') VARCHAR(20)"`
-	SortOrder int    `orm:"not null default 10 comment('排序') INT(11)"`
+	Code      string `json:"code"`
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	SortOrder int    `json:"sort_order"`
 }
 
 type NideshopSpecification struct {
-	Id        int    `orm:"not null pk autoincr INT(11)"`
-	Name      string `orm:"not null default '' VARCHAR(60)"`
-	SortOrder int    `orm:"not null default 0 TINYINT(3)"`
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	SortOrder int    `json:"sort_order"`
 }
 
 type NideshopTopic struct {
@@ -388,9 +388,9 @@ type NideshopTopic struct {
 }
 
 type NideshopTopicCategory struct {
-	Id     int    `orm:"not null pk autoincr INT(11)"`
-	PicUrl string `orm:"not null default '' VARCHAR(255)"`
-	Title  string `orm:"not null default '' VARCHAR(255)"`
+	Id     int    `json:"id"`
+	PicUrl string `json:"pic_url"`
+	Title  string `json:"title"`
 }
 
 type NideshopUser struct {
@@ -411,18 +411,18 @@ type NideshopUser struct {
 }
 
 type NideshopUserCoupon struct {
-	CouponId     int    `orm:"not null default 0 TINYINT(3)"`
-	CouponNumber string `orm:"not null default '' VARCHAR(20)"`
-	Id           int    `orm:"not null pk autoincr MEDIUMINT(8)"`
-	OrderId      int    `orm:"not null default 0 MEDIUMINT(8)"`
-	UsedTime     int    `orm:"not null default 0 INT(10)"`
-	UserId       int    `orm:"not null default 0 index INT(11)"`
+	CouponId     int    `json:"coupon_id"`
+	CouponNumber string `json:"coupon_number"`
+	Id           int    `json:"id"`
+	OrderId      int    `json:"order_id"`
+	UsedTime     int    `json:"used_time"`
+	UserId       int    `json:"user_id"`
 }
 
 type NideshopUserLevel struct {
-	Description string `orm:"not null default '' VARCHAR(255)"`
-	Id          int    `orm:"not null pk autoincr TINYINT(3)"`
-	Name        string `orm:"not null default '' VARCHAR(30)"`
+	Description string `json:"description"`
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
 }
 
 // type User struct {
@@ -437,12 +437,53 @@ func init() {
 
 	// register model
 	orm.RegisterModel(new(NideshopAd))
-	orm.RegisterModel(new(NideshopChannel))
-	orm.RegisterModel(new(NideshopGoods))
+	orm.RegisterModel(new(NideshopAdPosition))
+	orm.RegisterModel(new(NideshopAddress))
+	orm.RegisterModel(new(NideshopAdmin))
+	orm.RegisterModel(new(NideshopAttribute))
+	orm.RegisterModel(new(NideshopAttributeCategory))
+
 	orm.RegisterModel(new(NideshopBrand))
-	orm.RegisterModel(new(NideshopTopic))
+	orm.RegisterModel(new(NideshopCart))
 	orm.RegisterModel(new(NideshopCategory))
 
+	orm.RegisterModel(new(NideshopChannel))
+	orm.RegisterModel(new(NideshopCollect))
+	orm.RegisterModel(new(NideshopComment))
+	orm.RegisterModel(new(NideshopCommentPicture))
+
+	orm.RegisterModel(new(NideshopCoupon))
+	orm.RegisterModel(new(NideshopFeedback))
+
+	orm.RegisterModel(new(NideshopFootprint))
+	orm.RegisterModel(new(NideshopGoods))
+
+	orm.RegisterModel(new(NideshopGoodsAttribute))
+
+	orm.RegisterModel(new(NideshopGoodsGallery))
+	orm.RegisterModel(new(NideshopGoodsIssue))
+
+	orm.RegisterModel(new(NideshopGoodsSpecification))
+	orm.RegisterModel(new(NideshopKeywords))
+
+	orm.RegisterModel(new(NideshopOrder))
+	orm.RegisterModel(new(NideshopOrderExpress))
+
+	orm.RegisterModel(new(NideshopOrderGoods))
+
+	orm.RegisterModel(new(NideshopProduct))
+	orm.RegisterModel(new(NideshopRegion))
+
+	orm.RegisterModel(new(NideshopRelatedGoods))
+	orm.RegisterModel(new(NideshopSearchHistory))
+
+	orm.RegisterModel(new(NideshopShipper))
+	orm.RegisterModel(new(NideshopSpecification))
+	orm.RegisterModel(new(NideshopTopic))
+	orm.RegisterModel(new(NideshopTopicCategory))
+
 	orm.RegisterModel(new(NideshopUser))
-	orm.RegisterModel(new(NideshopAttributeCategory))
+	orm.RegisterModel(new(NideshopUserCoupon))
+	orm.RegisterModel(new(NideshopUserLevel))
+
 }

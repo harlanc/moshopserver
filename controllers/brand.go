@@ -23,7 +23,7 @@ func (this *BrandController) Brand_List() {
 		intsize = utils.String2Int(size)
 	}
 
-	var intpage int = 0
+	var intpage int = 1
 	if page != "" {
 		intpage = utils.String2Int(page)
 	}

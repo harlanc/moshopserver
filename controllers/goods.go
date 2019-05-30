@@ -15,79 +15,101 @@ type GoodsController struct {
 }
 
 type SkuRtnJson struct {
-	ProductList       []models.NideshopProduct
-	SpecificationList []models.SpecificationItem
+	ProductList       []models.NideshopProduct   `json:"productList"`
+	SpecificationList []models.SpecificationItem `json:"specificationList"`
 }
 
 type DetailRtnJson struct {
 	SkuRtnJson
-	Goods          models.NideshopGoods
-	Galleries      []models.NideshopGoodsGallery
-	Attribute      []Attribute
-	Issues         []models.NideshopGoodsIssue
-	UserHasCollect bool
-	Comment        Comment
-	Brand          models.NideshopBrand
+	Goods          models.NideshopGoods          `json:"info"`
+	Galleries      []models.NideshopGoodsGallery `json:"gallery"`
+	Attribute      []Attribute                   `json:"attribute"`
+	Issues         []models.NideshopGoodsIssue   `json:"issue"`
+	UserHasCollect int                           `json:"userHasCollect"`
+	Comment        Comment                       `json:"comment"`
+	Brand          models.NideshopBrand          `json:"brand"`
 }
 
 type CategoryRtnJson struct {
-	CurCategory     models.NideshopCategory
-	ParentCategory  models.NideshopCategory
-	BrotherCategory []models.NideshopCategory
+	CurCategory     models.NideshopCategory   `json:"currentCategory"`
+	ParentCategory  models.NideshopCategory   `json:"parentCategory"`
+	BrotherCategory []models.NideshopCategory `json:"brotherCategory"`
 }
 
 type Attribute struct {
-	Value string
-	Name  string
+	Value string `json:"value"`
+	Name  string `json:"name"`
 }
 
 type CommentUser struct {
-	NickName string
-	UserName string
-	Avatar   string
+	NickName string `json:"nick_name"`
+	UserName string `json:"user_name"`
+	Avatar   string `json:"avatar"`
 }
 
 type CommentInfo struct {
-	Content  string
-	AddTime  int64
-	NickName string
-	Avatar   string
-	PicList  []models.NideshopCommentPicture
+	Content  string                          `json:"content"`
+	AddTime  int64                           `json:"add_time"`
+	NickName string                          `json:"nick_name"`
+	Avatar   string                          `json:"avatar"`
+	PicList  []models.NideshopCommentPicture `json:"pic_list"`
 }
 
 type Comment struct {
-	Count int64
-	Data  CommentInfo
+	Count int64       `json:"count"`
+	Data  CommentInfo `json:"data"`
 }
 
 type FilterCategory struct {
-	Id      int
-	Name    string
-	Checked bool
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Checked bool   `json:"checked"`
 }
 
 type ListRtnJson struct {
 	utils.PageData
-	FilterCategories []FilterCategory
-	GoodsList        []orm.Params
+	FilterCategories []FilterCategory `json:"filterCategory"`
+	GoodsList        []orm.Params     `json:"goodsList"`
 }
 
 type Banner struct {
-	Url     string
-	Name    string
-	Img_url string
+	Url     string `json:"url"`
+	Name    string `json:"name"`
+	Img_url string `json:"imgurl"`
 }
 
 type NewRtnJson struct {
-	BannerInfo Banner
+	BannerInfo Banner `json:"bannerinfo"`
 }
 
 type HotRtnJson struct {
-	BannerInfo Banner
+	BannerInfo Banner `json:"bannerinfo"`
 }
 
 type CountRtnJson struct {
-	GoodsCount int64
+	GoodsCount int64 `json:"goodscount"`
+}
+
+func updateJsonKeysGoods(vals []orm.Params) {
+
+	for _, val := range vals {
+		for k, v := range val {
+			switch k {
+			case "Id":
+				delete(val, k)
+				val["id"] = v
+			case "Name":
+				delete(val, k)
+				val["name"] = v
+			case "ListPicUrl":
+				delete(val, k)
+				val["list_pic_url"] = v
+			case "RetailPrice":
+				delete(val, k)
+				val["retail_price"] = v
+			}
+		}
+	}
 }
 
 func (this *GoodsController) Goods_Index() {
@@ -140,12 +162,12 @@ func (this *GoodsController) Goods_Detail() {
 
 	qb, _ := orm.NewQueryBuilder("mysql")
 	var attributes []Attribute
-	qb.Select("gs.value", "a.name").
+	qb.Select("ga.value", "a.name").
 		From("nideshop_goods_attribute ga").
 		InnerJoin("nideshop_attribute a").On("ga.attribute_id = a.id").
 		Where("ga.goods_id =" + goodsId).OrderBy("ga.id").Asc()
 	sql := qb.String()
-	o.Raw(sql, 20).QueryRows(&attributes)
+	o.Raw(sql).QueryRows(&attributes)
 
 	var issues []models.NideshopGoodsIssue
 	issue := new(models.NideshopGoodsIssue)
@@ -185,14 +207,9 @@ func (this *GoodsController) Goods_Detail() {
 	plist := models.GetProductList(intGoodsId)
 	slist := models.GetSpecificationList(intGoodsId)
 
-	data, err := json.Marshal(DetailRtnJson{Goods: goodone, Galleries: galleries, Attribute: attributes,
+	utils.ReturnHTTPSuccess(&this.Controller, DetailRtnJson{Goods: goodone, Galleries: galleries, Attribute: attributes,
 		UserHasCollect: userhascollect, Issues: issues, Comment: commentval, Brand: *brand,
 		SkuRtnJson: SkuRtnJson{ProductList: plist, SpecificationList: slist}})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
 	this.ServeJSON()
 }
 
@@ -210,15 +227,10 @@ func (this *GoodsController) Goods_Category() {
 
 	o.QueryTable(category).Filter("id", intgoogsid).One(&curcategory)
 	o.QueryTable(category).Filter("id", curcategory.ParentId).One(&parentcategory)
-	o.QueryTable(category).Filter("parent_id", curcategory.ParentId).One(&brothercategory)
+	o.QueryTable(category).Filter("parent_id", curcategory.ParentId).All(&brothercategory)
 
-	data, err := json.Marshal(CategoryRtnJson{CurCategory: curcategory,
+	utils.ReturnHTTPSuccess(&this.Controller, CategoryRtnJson{CurCategory: curcategory,
 		ParentCategory: parentcategory, BrotherCategory: brothercategory})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
 	this.ServeJSON()
 }
 func (this *GoodsController) Goods_List() {
@@ -231,6 +243,16 @@ func (this *GoodsController) Goods_List() {
 	size := this.GetString("size")
 	sort := this.GetString("sort")
 	order := this.GetString("order")
+
+	var intsize int = 10
+	if size != "" {
+		intsize = utils.String2Int(size)
+	}
+
+	var intpage int = 1
+	if page != "" {
+		intpage = utils.String2Int(page)
+	}
 
 	o := orm.NewOrm()
 	goodstable := new(models.NideshopGoods)
@@ -254,7 +276,7 @@ func (this *GoodsController) Goods_List() {
 
 	var categoryids []orm.Params
 	rs.Limit(10000).Values(&categoryids, "category_id")
-	categoryintids := utils.ExactMapValues2Int64Array(categoryids, "Id")
+	categoryintids := utils.ExactMapValues2Int64Array(categoryids, "CategoryId")
 
 	var filterCategories = []FilterCategory{FilterCategory{Id: 0, Name: "全部", Checked: false}}
 
@@ -268,11 +290,10 @@ func (this *GoodsController) Goods_List() {
 		o.QueryTable(categorytable).Filter("id__in", parentintids).OrderBy("sort_order").Values(&parentcategories, "id", "name")
 
 		for _, value := range parentcategories {
-			id := value["id"].(int)
+			id := value["Id"].(int64)
 			checked := (categoryId == "" && id == 0)
-			filterId := utils.String2Int(categoryId)
 
-			filterCategories = append(filterCategories, FilterCategory{Id: filterId, Name: value["name"].(string), Checked: checked})
+			filterCategories = append(filterCategories, FilterCategory{Id: id, Name: value["Name"].(string), Checked: checked})
 		}
 	}
 
@@ -295,18 +316,11 @@ func (this *GoodsController) Goods_List() {
 
 	var rawData []orm.Params
 	rs.Values(&rawData, "id", "name", "list_pic_url", "retail_price")
+	updateJsonKeysGoods(rawData)
 
-	intPage := utils.String2Int(page)
-	intSize := utils.String2Int(size)
+	pageData := utils.GetPageData(rawData, intpage, intsize)
 
-	pageData := utils.GetPageData(rawData, intPage, intSize)
-
-	data, err := json.Marshal(ListRtnJson{PageData: pageData, FilterCategories: filterCategories, GoodsList: pageData.Data.([]orm.Params)})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, ListRtnJson{PageData: pageData, FilterCategories: filterCategories, GoodsList: pageData.Data.([]orm.Params)})
 	this.ServeJSON()
 }
 
@@ -352,7 +366,7 @@ func (this *GoodsController) Goods_Filter() {
 		rs.OrderBy("sort_order").Filter("id__in", parentintids).Values(&parentcategories, "id", "name")
 
 		for _, value := range parentcategories {
-			id := value["id"].(int)
+			id := value["id"].(int64)
 			filterCategories = append(filterCategories, FilterCategory{Id: id, Name: value["name"].(string)})
 		}
 	}
@@ -428,17 +442,6 @@ func (this *GoodsController) Goods_Count() {
 
 	count, _ := o.QueryTable(goodstable).Filter("is_delete", 0).Filter("is_on_sale", 1).Count()
 
-	data, err := json.Marshal(CountRtnJson{GoodsCount: count})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, CountRtnJson{GoodsCount: count})
 	this.ServeJSON()
-
 }
-
-// func (this *GoodsController) c() {
-// 	//	return this.Ctx.UserId
-
-// }
