@@ -1,4 +1,4 @@
-#moshopserver小程序商城后台系统
+# moshopserver小程序商城后台系统
 
 ## 介绍
 
@@ -62,7 +62,7 @@
 
 ## 用到的第三方依赖包
 
-- [beego] (https://github.com/astaxie/beego)
+- [beego](https://github.com/astaxie/beego)
 - [go-sql-driver](https://github.com/go-sql-driver/mysql)
 - [go.uuid](https://github.com/satori/go.uuid)
 
