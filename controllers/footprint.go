@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -84,12 +83,7 @@ func (this *FootprintController) Footprint_List() {
 		return rvdata[i].AddTime < rvdata[j].AddTime
 	})
 
-	data, err := json.Marshal(rvdata)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, rvdata)
 	this.ServeJSON()
 
 }

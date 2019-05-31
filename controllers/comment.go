@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -71,12 +69,7 @@ func (this *CommentController) Comment_Count() {
 	o.Raw(sql).QueryRows(&list)
 	haspiccount := len(list)
 
-	data, err := json.Marshal(CommentCountRtnJson{allcount, haspiccount})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, CommentCountRtnJson{allcount, haspiccount})
 	this.ServeJSON()
 }
 
@@ -171,12 +164,7 @@ func (this *CommentController) Comment_List() {
 	}
 	pagedata.Data = rtncomments
 
-	data, err := json.Marshal(pagedata)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, pagedata)
 	this.ServeJSON()
 
 }

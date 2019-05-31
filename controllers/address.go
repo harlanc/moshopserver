@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -46,12 +44,7 @@ func (this *AddressController) Address_List() {
 
 	}
 
-	data, err := json.Marshal(rtnaddress)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, rtnaddress)
 	this.ServeJSON()
 
 }
@@ -70,18 +63,13 @@ func (this *AddressController) Address_Detail() {
 	cityname := models.GetRegionName(address.CityId)
 	distinctname := models.GetRegionName(address.DistrictId)
 
-	data, err := json.Marshal(AddressListRtnJson{
+	utils.ReturnHTTPSuccess(&this.Controller, AddressListRtnJson{
 		Address:      address,
 		ProviceName:  provicename,
 		CityName:     cityname,
 		DistrictName: distinctname,
 		FullRegion:   provicename + cityname + distinctname,
 	})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
 	this.ServeJSON()
 
 }
@@ -153,12 +141,7 @@ func (this *AddressController) Address_Save() {
 	var addressinfo models.NideshopAddress
 	o.QueryTable(addresstable).Filter("id", intid).One(&addressinfo)
 
-	data, err := json.Marshal(addressinfo)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, addressinfo)
 	this.ServeJSON()
 
 }

@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -65,13 +63,7 @@ func (this *OrderController) Order_List() {
 
 	firstpagedorders.Data = rtnorderlist
 
-	data, err := json.Marshal(firstpagedorders)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, firstpagedorders)
 	this.ServeJSON()
 }
 
@@ -130,18 +122,11 @@ func (this *OrderController) Order_Detail() {
 	}
 
 	handleoption := models.GetOrderHandleOption(intorderId)
-
-	data, err := json.Marshal(OrderDetailRtnJson{
+	utils.ReturnHTTPSuccess(&this.Controller, OrderDetailRtnJson{
 		OrderInfo:    orderinfo,
 		OrderGoods:   ordergoods,
 		HandleOption: handleoption,
 	})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
 	this.ServeJSON()
 }
 
@@ -223,13 +208,7 @@ func (this *OrderController) Order_Submit() {
 	}
 	models.ClearBuyGoods(getLoginUserId())
 
-	data, err := json.Marshal(orderinfo)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, orderinfo)
 	this.ServeJSON()
 
 }
@@ -244,13 +223,6 @@ func (this *OrderController) Order_Express() {
 
 	latestexpressinfo := models.GetLatestOrderExpress(intorderId)
 
-	data, err := json.Marshal(latestexpressinfo)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, latestexpressinfo)
 	this.ServeJSON()
-
 }

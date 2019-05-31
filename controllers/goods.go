@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"net/url"
 
 	"github.com/astaxie/beego"
@@ -120,12 +119,7 @@ func (this *GoodsController) Goods_Index() {
 	good := new(models.NideshopGoods)
 	o.QueryTable(good).All(&goods)
 
-	data, err := json.Marshal(goods)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, goods)
 	this.ServeJSON()
 }
 
@@ -137,12 +131,7 @@ func (this *GoodsController) Goods_Sku() {
 	plist := models.GetProductList(goodsId_int)
 	slist := models.GetSpecificationList(goodsId_int)
 
-	data, err := json.Marshal(SkuRtnJson{ProductList: plist, SpecificationList: slist})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, SkuRtnJson{ProductList: plist, SpecificationList: slist})
 	this.ServeJSON()
 }
 
@@ -374,24 +363,16 @@ func (this *GoodsController) Goods_Filter() {
 			filterCategories = append(filterCategories, FilterCategory{Id: id, Name: value["name"].(string)})
 		}
 	}
-	data, err := json.Marshal(filterCategories)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+
+	utils.ReturnHTTPSuccess(&this.Controller, filterCategories)
 	this.ServeJSON()
 }
 
 func (this *GoodsController) Goods_New() {
 
 	banner := Banner{Url: "", Name: "坚持初心，为你寻觅世间好物", Img_url: "http://yanxuan.nosdn.127.net/8976116db321744084774643a933c5ce.png"}
-	data, err := json.Marshal(NewRtnJson{BannerInfo: banner})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+
+	utils.ReturnHTTPSuccess(&this.Controller, NewRtnJson{BannerInfo: banner})
 	this.ServeJSON()
 
 }
@@ -399,12 +380,8 @@ func (this *GoodsController) Goods_New() {
 func (this *GoodsController) Goods_Hot() {
 
 	banner := Banner{Url: "", Name: "大家都在买的严选好物", Img_url: "http://yanxuan.nosdn.127.net/8976116db321744084774643a933c5ce.png"}
-	data, err := json.Marshal(HotRtnJson{BannerInfo: banner})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+
+	utils.ReturnHTTPSuccess(&this.Controller, HotRtnJson{BannerInfo: banner})
 	this.ServeJSON()
 }
 
@@ -429,13 +406,8 @@ func (this *GoodsController) Goods_Related() {
 	} else {
 		o.QueryTable(goodstable).Filter("id__in", rgintids).Values(&relatedgoods, "id", "name", "list_pic_url", "retail_price")
 	}
-
-	data, err := json.Marshal(relatedgoods)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	updateJsonKeysGoods(relatedgoods)
+	utils.ReturnHTTPSuccess(&this.Controller, relatedgoods)
 	this.ServeJSON()
 }
 

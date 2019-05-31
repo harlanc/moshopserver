@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -23,13 +21,7 @@ func (this *RegionController) Region_Info() {
 	var region models.NideshopRegion
 	o.QueryTable(regiontable).Filter("id", intregionid).One(&region)
 
-	data, err := json.Marshal(region)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, region)
 	this.ServeJSON()
 
 }
@@ -44,12 +36,6 @@ func (this *RegionController) Region_List() {
 	var regions []models.NideshopRegion
 	o.QueryTable(regiontable).Filter("parent_id", intparentid).All(&regions)
 
-	data, err := json.Marshal(regions)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, regions)
 	this.ServeJSON()
 }

@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -35,12 +33,7 @@ func (this *BrandController) Brand_List() {
 
 	pagedata := utils.GetPageData(brands, intpage, intsize)
 
-	data, err := json.Marshal(pagedata)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, pagedata)
 	this.ServeJSON()
 
 }
@@ -59,11 +52,6 @@ func (this *BrandController) Brand_Detail() {
 
 	o.QueryTable(brandtable).Filter("id", intid).One(&brand)
 
-	data, err := json.Marshal(BrandDetailRtnJson{brand})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, BrandDetailRtnJson{brand})
 	this.ServeJSON()
 }

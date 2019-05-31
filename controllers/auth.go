@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -59,12 +57,7 @@ func (this *AuthController) Auth_LoginByWeixin() {
 	rtnInfo["sessionKey"] = sessionKey
 	rtnInfo["userInfo"] = userinfo
 
-	data, err := json.Marshal(rtnInfo)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, rtnInfo)
 	this.ServeJSON()
 
 }

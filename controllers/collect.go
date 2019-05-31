@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -37,13 +35,7 @@ func (this *CollectController) Collect_List() {
 	o := orm.NewOrm()
 	o.Raw(sql).QueryRows(&list)
 
-	data, err := json.Marshal(list)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, list)
 	this.ServeJSON()
 
 }
@@ -86,12 +78,7 @@ func (this *CollectController) Collect_AddorDelete() {
 		this.Abort(err.Error())
 	}
 
-	data, err := json.Marshal(rvjson)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, rvjson)
 
 	this.ServeJSON()
 

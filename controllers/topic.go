@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -79,12 +77,7 @@ func (this *TopicController) Topic_Detail() {
 
 	o.QueryTable(topictable).Filter("id", intid).One(&topic)
 
-	data, err := json.Marshal(topic)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, topic)
 	this.ServeJSON()
 
 }
@@ -96,11 +89,6 @@ func (this *TopicController) Topic_Related() {
 	var topics []orm.Params
 	o.QueryTable(topictable).Limit(4).Values(&topics, "id", "title", "price_info", "scene_pic_url", "subtitle")
 
-	data, err := json.Marshal(topics)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, topics)
 	this.ServeJSON()
 }

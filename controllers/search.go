@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -71,13 +69,7 @@ func (this *SearchController) Search_Helper() {
 	var reskeywords []orm.Params
 	o.QueryTable(keywordstable).Filter("keyword__icontains", keyword).Distinct().Limit(10).Values(&reskeywords, "keyword")
 
-	data, err := json.Marshal(reskeywords)
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
-
+	utils.ReturnHTTPSuccess(&this.Controller, reskeywords)
 	this.ServeJSON()
 
 }

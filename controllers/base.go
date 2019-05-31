@@ -5,7 +5,6 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/moshopserver/services"
-	"github.com/moshopserver/utils"
 )
 
 type BaseController struct {
@@ -32,5 +31,5 @@ func (this *BaseController) init() {
 }
 
 func getLoginUserId() int {
-	return utils.String2Int(userId)
+	return 1 //utils.String2Int(userId)
 }

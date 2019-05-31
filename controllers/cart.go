@@ -64,12 +64,7 @@ func getCart() IndexCartData {
 
 func (this *CartController) Cart_Index() {
 
-	data, err := json.Marshal(getCart())
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()
 }
 
@@ -139,12 +134,7 @@ func (this *CartController) Cart_Add() {
 		o.QueryTable(carttable).Update(orm.Params{"number": orm.ColValue(orm.ColAdd, intnumber)})
 	}
 
-	data, err := json.Marshal(getCart())
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()
 }
 
@@ -225,12 +215,7 @@ func (this *CartController) Cart_Update() {
 			"goods_sn":                     product.GoodsSn})
 	}
 
-	data, errjson := json.Marshal(getCart())
-	if errjson != nil {
-		this.Data["json"] = errjson
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()
 }
 
@@ -252,12 +237,7 @@ func (this *CartController) Cart_Checked() {
 		"checked": intisChecked,
 	})
 
-	data, errjson := json.Marshal(getCart())
-	if errjson != nil {
-		this.Data["json"] = errjson
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()
 }
 
@@ -273,12 +253,7 @@ func (this *CartController) Cart_Delete() {
 	carttable := new(models.NideshopCart)
 	o.QueryTable(carttable).Filter("product_id__in", productidsarray).Delete()
 
-	data, errjson := json.Marshal(getCart())
-	if errjson != nil {
-		this.Data["json"] = errjson
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()
 
 }
@@ -348,7 +323,7 @@ func (this *CartController) Cart_Checkout() {
 	ordertotalprice := cartData.CartTotal.CheckedGoodsAmount + freightPrice - couponPrice
 	actualPrice := ordertotalprice - 0
 
-	data, err := json.Marshal(CheckoutRtnJson{
+	utils.ReturnHTTPSuccess(&this.Controller, CheckoutRtnJson{
 		Address:      address,
 		FreightPrice: freightPrice,
 		// checkedCoupon: {},
@@ -359,10 +334,5 @@ func (this *CartController) Cart_Checkout() {
 		OrderTotalPrice:  ordertotalprice,
 		ActualPrice:      actualPrice,
 	})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
 	this.ServeJSON()
 }

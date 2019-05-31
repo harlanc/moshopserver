@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -51,13 +49,8 @@ func (this *PayController) Pay_Prepay() {
 	if err != nil {
 		this.Abort("微信支付失败")
 	} else {
-		data, err := json.Marshal(params)
-		if err != nil {
-			this.Data["json"] = err
-		} else {
-			this.Data["json"] = json.RawMessage(string(data))
-		}
 
+		utils.ReturnHTTPSuccess(&this.Controller, params)
 		this.ServeJSON()
 	}
 }
