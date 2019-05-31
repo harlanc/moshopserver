@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
+	"github.com/moshopserver/utils"
 )
 
 type SearchController struct {
@@ -13,9 +14,25 @@ type SearchController struct {
 }
 
 type SearchIndexRtnJson struct {
-	DefaultKeyword     models.NideshopKeywords
-	HistoryKeyworkList []orm.Params
-	HotKeywordList     []orm.Params
+	DefaultKeyword     models.NideshopKeywords `json:"defaultKeyword"`
+	HistoryKeyworkList []string                `json:"historyKeywordList"`
+	HotKeywordList     []orm.Params            `json:"hotKeywordList"`
+}
+
+func updateJsonKeysSearch(vals []orm.Params) {
+
+	for _, val := range vals {
+		for k, v := range val {
+			switch k {
+			case "Keyword":
+				delete(val, k)
+				val["keyword"] = v
+			case "IsHot":
+				delete(val, k)
+				val["is_hot"] = v
+			}
+		}
+	}
 }
 
 func (this *SearchController) Search_Index() {
@@ -27,21 +44,18 @@ func (this *SearchController) Search_Index() {
 
 	var hotkeywords []orm.Params
 	o.QueryTable(keywordstable).Distinct().Limit(10).Values(&hotkeywords, "keyword", "is_hot")
+	updateJsonKeysSearch(hotkeywords)
 
 	searchhistorytable := new(models.NideshopSearchHistory)
 	var historykeywords []orm.Params
 	o.QueryTable(searchhistorytable).Filter("user_id", getLoginUserId()).Distinct().Limit(10).Values(&historykeywords, "keyword")
+	arraykeywords := utils.ExactMapValues2StringArray(historykeywords, "Keyword")
 
-	data, err := json.Marshal(SearchIndexRtnJson{
+	utils.ReturnHTTPSuccess(&this.Controller, SearchIndexRtnJson{
 		DefaultKeyword:     keyword,
-		HistoryKeyworkList: historykeywords,
+		HistoryKeyworkList: arraykeywords,
 		HotKeywordList:     hotkeywords,
 	})
-	if err != nil {
-		this.Data["json"] = err
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
 
 	this.ServeJSON()
 

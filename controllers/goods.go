@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"net/url"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -264,8 +265,11 @@ func (this *GoodsController) Goods_List() {
 	if isHot != "" {
 		rs = rs.Filter("is_hot", isHot)
 	}
+
+	keyword, _ = url.QueryUnescape(keyword)
 	if keyword != "" {
-		rs = rs.Filter("icontains", keyword)
+
+		rs = rs.Filter("name__icontains", keyword)
 		searchhistory := models.NideshopSearchHistory{Keyword: keyword, UserId: utils.Int2String(getLoginUserId()),
 			AddTime: utils.GetTimestamp()}
 		o.Insert(&searchhistory)
