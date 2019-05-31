@@ -15,13 +15,13 @@ type CartController struct {
 }
 
 type CartTotal struct {
-	GoodsCount         int
-	GoodsAmount        float64
-	CheckedGoodsCount  int
-	CheckedGoodsAmount float64
+	GoodsCount         int     `json:"goodsCount"`
+	GoodsAmount        float64 `json:"goodsAmount"`
+	CheckedGoodsCount  int     `json:"checkedGoodsCount"`
+	CheckedGoodsAmount float64 `json:"checkedGoodsAmount"`
 }
 type GoodsCount struct {
-	CartTotal CartTotal
+	CartTotal CartTotal `json:"cartTotal"`
 }
 type IndexCartData struct {
 	CartList  []models.NideshopCart
@@ -38,7 +38,7 @@ func getCart() IndexCartData {
 	o := orm.NewOrm()
 	carttable := new(models.NideshopCart)
 	var carts []models.NideshopCart
-	o.QueryTable(carttable).Filter("user_id", getLoginUserId()).Filter("session_id", 1).All(carts)
+	o.QueryTable(carttable).Filter("user_id", getLoginUserId()).Filter("session_id", 1).All(&carts)
 
 	var goodsCount int
 	var goodsAmount float64
@@ -287,12 +287,7 @@ func (this *CartController) Cart_GoodsCount() {
 
 	cartData := getCart()
 	goodscount := GoodsCount{CartTotal: CartTotal{GoodsCount: cartData.CartTotal.GoodsCount}}
-	data, errjson := json.Marshal(goodscount)
-	if errjson != nil {
-		this.Data["json"] = errjson
-	} else {
-		this.Data["json"] = json.RawMessage(string(data))
-	}
+	utils.ReturnHTTPSuccess(&this.Controller, goodscount)
 	this.ServeJSON()
 }
 

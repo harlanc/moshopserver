@@ -113,9 +113,18 @@ func (this *CommentController) Comment_List() {
 	showType := this.GetString("showType")
 	inttypeId := utils.String2Int(typeId)
 	intvalueId := utils.String2Int(valueId)
-	intpage := utils.String2Int(page)
-	intsize := utils.String2Int(size)
+
 	intshowtype := utils.String2Int(showType)
+
+	var intsize int = 10
+	if size != "" {
+		intsize = utils.String2Int(size)
+	}
+
+	var intpage int = 1
+	if page != "" {
+		intpage = utils.String2Int(page)
+	}
 
 	o := orm.NewOrm()
 	commenttable := new(models.NideshopComment)
