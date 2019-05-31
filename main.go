@@ -27,6 +27,7 @@ func main() {
 
 	//controller := controllers.IndexController
 	beego.BConfig.WebConfig.AutoRender = false
+	beego.BConfig.CopyRequestBody = true
 
 	beego.Run() // listen and serve on 0.0.0.0:8080
 

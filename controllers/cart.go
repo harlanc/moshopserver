@@ -24,8 +24,8 @@ type GoodsCount struct {
 	CartTotal CartTotal `json:"cartTotal"`
 }
 type IndexCartData struct {
-	CartList  []models.NideshopCart
-	CartTotal CartTotal
+	CartList  []models.NideshopCart `json:"cartList"`
+	CartTotal CartTotal             `json:"cartTotal"`
 }
 
 type GoodsSpecifition struct {
@@ -68,20 +68,26 @@ func (this *CartController) Cart_Index() {
 	this.ServeJSON()
 }
 
+type CartAddBody struct {
+	GoodsId   int `json:"goodsId"`
+	ProductId int `json:"productId"`
+	Number    int `json:"number"`
+}
+
 func (this *CartController) Cart_Add() {
 
-	goodsId := this.GetString("goodsId")
-	productId := this.GetString("productId")
-	number := this.GetString("number")
+	var ab CartAddBody
+	body := this.Ctx.Input.RequestBody
+	json.Unmarshal(body, &ab)
 
-	intgoodsId := utils.String2Int(goodsId)
-	intproductId := utils.String2Int(productId)
-	intnumber := utils.String2Int(number)
+	intgoodsId := ab.GoodsId
+	intproductId := ab.ProductId
+	intnumber := ab.Number
 
 	o := orm.NewOrm()
 	goodstable := new(models.NideshopGoods)
 	var goods models.NideshopGoods
-	err := o.QueryTable(goodstable).Filter("id", goodsId).One(&goods)
+	err := o.QueryTable(goodstable).Filter("id", intgoodsId).One(&goods)
 	if err == orm.ErrNoRows || goods.IsDelete {
 		this.CustomAbort(400, "商品已下架")
 	}
@@ -95,7 +101,8 @@ func (this *CartController) Cart_Add() {
 
 	carttable := new(models.NideshopCart)
 	var cart models.NideshopCart
-	err = o.QueryTable(carttable).Filter("goods_id", intgoodsId).Filter("product_id", intproductId).One(&cart)
+	err = o.QueryTable(carttable).Filter("goods_id", intgoodsId).Filter("product_id", intproductId).
+		Filter("user_id", getLoginUserId()).One(&cart)
 
 	if err == orm.ErrNoRows {
 		var goodsSepcifitionValues []orm.Params
@@ -107,7 +114,7 @@ func (this *CartController) Cart_Add() {
 			for _, val := range goodsspecificationids {
 				intgoodsspecificationids = append(intgoodsspecificationids, utils.String2Int(val))
 			}
-			o.QueryTable(goodsspecitable).Filter("goods_id", goodsId).Filter("id__in", intgoodsspecificationids).
+			o.QueryTable(goodsspecitable).Filter("goods_id", intgoodsId).Filter("id__in", intgoodsspecificationids).
 				Values(&goodsSepcifitionValues, "value")
 		}
 
