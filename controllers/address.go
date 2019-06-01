@@ -12,11 +12,11 @@ type AddressController struct {
 }
 
 type AddressListRtnJson struct {
-	Address      models.NideshopAddress
-	ProviceName  string
-	CityName     string
-	DistrictName string
-	FullRegion   string
+	Address      models.NideshopAddress `json:"address"`
+	ProviceName  string                 `json:"proviceName"`
+	CityName     string                 `json:"cityName"`
+	DistrictName string                 `json:"districtName"`
+	FullRegion   string                 `json:"fullRegion"`
 }
 
 func (this *AddressController) Address_List() {

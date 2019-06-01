@@ -83,6 +83,7 @@ func (this *CartController) Cart_Add() {
 	intgoodsId := ab.GoodsId
 	intproductId := ab.ProductId
 	intnumber := ab.Number
+	intuserId := getLoginUserId()
 
 	o := orm.NewOrm()
 	goodstable := new(models.NideshopGoods)
@@ -102,7 +103,7 @@ func (this *CartController) Cart_Add() {
 	carttable := new(models.NideshopCart)
 	var cart models.NideshopCart
 	err = o.QueryTable(carttable).Filter("goods_id", intgoodsId).Filter("product_id", intproductId).
-		Filter("user_id", getLoginUserId()).One(&cart)
+		Filter("user_id", intuserId).One(&cart)
 
 	if err == orm.ErrNoRows {
 		var goodsSepcifitionValues []orm.Params
@@ -127,7 +128,7 @@ func (this *CartController) Cart_Add() {
 			ListPicUrl:                goods.ListPicUrl,
 			Number:                    intnumber,
 			SessionId:                 "1",
-			UserId:                    getLoginUserId(),
+			UserId:                    intuserId,
 			RetailPrice:               product.RetailPrice,
 			MarketPrice:               product.RetailPrice,
 			GoodsSpecifitionNameValue: strings.Join(vals, ";"),
@@ -145,39 +146,43 @@ func (this *CartController) Cart_Add() {
 	this.ServeJSON()
 }
 
+type CartUpdateBody struct {
+	GoodsId   int `json:"goodsId"`
+	ProductId int `json:"productId"`
+	Number    int `json:"number"`
+	Id        int `json:"id"`
+}
+
 func (this *CartController) Cart_Update() {
 
-	goodsId := this.GetString("goodsId")
-	productId := this.GetString("productId")
-	number := this.GetString("number")
-	id := this.GetString("id")
+	var ub CartUpdateBody
+	body := this.Ctx.Input.RequestBody
+	json.Unmarshal(body, &ub)
 
-	intgoodsId := utils.String2Int(goodsId)
-	intproductId := utils.String2Int(productId)
-	intnumber := utils.String2Int(number)
-	intid := utils.String2Int(id)
+	intgoodsId := ub.GoodsId
+	intproductId := ub.ProductId
+	intnumber := ub.Number
+	intid := ub.Id
 
 	o := orm.NewOrm()
 
 	producttable := new(models.NideshopProduct)
 	var product models.NideshopProduct
-	errproduct := o.QueryTable(producttable).Filter("goods_id", goodsId).Filter("id", productId).One(&product)
+	errproduct := o.QueryTable(producttable).Filter("goods_id", intgoodsId).Filter("id", intproductId).One(&product)
 	if errproduct == orm.ErrNoRows || product.GoodsNumber < intnumber {
 		this.CustomAbort(400, "库存不足")
 	}
 
 	carttable := new(models.NideshopCart)
 	var cart models.NideshopCart
+	o.QueryTable(carttable).Filter("id", intid).One(&cart)
 	if cart.ProductId == intproductId {
-		o.QueryTable(carttable).Filter("id", intid).Update(orm.Params{"number": intnumber})
+		cart.Number = intnumber
+		o.Update(&cart, "number")
 
-		data, errjson := json.Marshal(getCart())
-		if errjson != nil {
-			this.Data["json"] = errjson
-		} else {
-			this.Data["json"] = json.RawMessage(string(data))
-		}
+		utils.ReturnHTTPSuccess(&this.Controller, getCart())
 		this.ServeJSON()
+		return
 	}
 
 	var newcart models.NideshopCart
@@ -191,7 +196,7 @@ func (this *CartController) Cart_Update() {
 			qb.Select("ngs.*", "ns.name").
 				From("nideoshop_goods_specification ngs").
 				InnerJoin("nideshop_specification ns").On("ns.id = ngs.specification_id").
-				Where("ngs.goods_id =" + goodsId).And("ngs.id").In(strings.Join(goodsspecificationids, ","))
+				Where("ngs.goods_id =" + utils.Int2String(intgoodsId)).And("ngs.id").In(strings.Join(goodsspecificationids, ","))
 			sql := qb.String()
 			o.Raw(sql).QueryRows(&goodsspecifitons)
 		}
@@ -226,17 +231,33 @@ func (this *CartController) Cart_Update() {
 	this.ServeJSON()
 }
 
+type CartCheckedBody struct {
+	IsChecked  int         `json:"isChecked"`
+	ProductIds interface{} `json:"productIds"`
+}
+
 func (this *CartController) Cart_Checked() {
 
-	isChecked := this.GetString("isChecked")
-	productIds := this.GetString("productIds")
+	var cb CartCheckedBody
+	body := this.Ctx.Input.RequestBody
+	json.Unmarshal(body, &cb)
 
-	intisChecked := utils.String2Int(isChecked)
+	intisChecked := cb.IsChecked
 
-	if productIds == "" {
+	if cb.ProductIds == "" {
 		this.Abort("删除出错")
 	}
-	productIdsarray := strings.Split(productIds, ",")
+	var productIdsarray []string
+	switch val := cb.ProductIds.(type) {
+	// 单选
+	case float64:
+		productIdsarray = append(productIdsarray, utils.Int2String(int(val)))
+	//多选
+	case string:
+		productIdsarray = strings.Split(val, ",")
+	default:
+
+	}
 
 	o := orm.NewOrm()
 	carttable := new(models.NideshopCart)
@@ -248,17 +269,25 @@ func (this *CartController) Cart_Checked() {
 	this.ServeJSON()
 }
 
+type CartDeleteBody struct {
+	ProductIds string `json:"productIds"`
+}
+
 func (this *CartController) Cart_Delete() {
 
-	productIds := this.GetString("productIds")
-	if productIds == "" {
+	var db CartDeleteBody
+	body := this.Ctx.Input.RequestBody
+	err := json.Unmarshal(body, &db)
+
+	intuserId := getLoginUserId()
+	if err != nil {
 		this.Abort("删除出错")
 	}
-	productidsarray := strings.Split(productIds, ",")
+	productidsarray := strings.Split(db.ProductIds, ",")
 
 	o := orm.NewOrm()
 	carttable := new(models.NideshopCart)
-	o.QueryTable(carttable).Filter("product_id__in", productidsarray).Delete()
+	o.QueryTable(carttable).Filter("product_id__in", productidsarray).Filter("user_id", intuserId).Delete()
 
 	utils.ReturnHTTPSuccess(&this.Controller, getCart())
 	this.ServeJSON()

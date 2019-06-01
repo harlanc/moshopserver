@@ -23,6 +23,14 @@ func Int2String(val int) string {
 	return strconv.Itoa(val)
 }
 
+func Int642String(val int64) string {
+	return strconv.FormatInt(val, 10)
+}
+
+func Float642String(val float64) string {
+	return strconv.FormatFloat(val, 'E', -1, 64)
+}
+
 func GetUUID() string {
 	uuid, err := uuid.NewV4()
 	if err != nil {
