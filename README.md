@@ -69,6 +69,6 @@
 ## 联系方式
 
 有疑问可以加我：
-![](http:/qiniu.harlanc.vip/6.5.2019_7:55:58.png)![]()
+![](http://qiniu.harlanc.vip/6.5.2019_7:55:58.png)
 
 
