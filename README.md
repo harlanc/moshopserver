@@ -70,6 +70,6 @@
 
 有疑问可以加我：
 
-![](http:/qiniu.harlanc.vip/6.5.2019_8:00:27.png)
+![](http://qiniu.harlanc.vip/6.5.2019_8:00:27.png)
 
 
