@@ -26,14 +26,13 @@ func AesCBCDecrypt(encryptData, key, iv []byte) ([]byte, error) {
 	if len(encryptData) < blockSize {
 		panic("ciphertext too short")
 	}
-	encryptData = encryptData[blockSize:]
 
 	if len(encryptData)%blockSize != 0 {
 		panic("ciphertext is not a multiple of the block size")
 	}
 	mode := cipher.NewCBCDecrypter(block, iv)
 
-	var decryptedData []byte
+	decryptedData := make([]byte, len(encryptData))
 	mode.CryptBlocks(decryptedData, encryptData)
 	decryptedData = PKCS7UnPadding(decryptedData)
 	return decryptedData, nil

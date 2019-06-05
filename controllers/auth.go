@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -12,13 +14,21 @@ type AuthController struct {
 	beego.Controller
 }
 
+type AuthLoginBody struct {
+	Code     string               `json:"code"`
+	UserInfo services.ResUserInfo `json:"userInfo"`
+}
+
 func (this *AuthController) Auth_LoginByWeixin() {
 
-	code := this.GetString("code")
-	fulluserinfo := this.GetString("userInfo")
+	var alb AuthLoginBody
+	body := this.Ctx.Input.RequestBody
+
+	err := json.Unmarshal(body, &alb)
+	//fmt.Print(alb)
 	clientIP := this.Ctx.Input.IP()
 
-	userInfo := services.Login(code, fulluserinfo)
+	userInfo := services.Login(alb.Code, alb.UserInfo)
 	if userInfo == nil {
 
 	}
@@ -26,9 +36,9 @@ func (this *AuthController) Auth_LoginByWeixin() {
 	o := orm.NewOrm()
 
 	var user models.NideshopUser
-	usertable := new(models.NideshopCategory)
-	err := o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).One(&user)
-	if err != nil {
+	usertable := new(models.NideshopUser)
+	err = o.QueryTable(usertable).Filter("weixin_openid", userInfo.OpenID).One(&user)
+	if err == orm.ErrNoRows {
 		newuser := models.NideshopUser{Username: utils.GetUUID(), Password: "", RegisterTime: utils.GetTimestamp(),
 			RegisterIp: clientIP, Mobile: "", WeixinOpenid: userInfo.OpenID, Avatar: userInfo.AvatarUrl, Gender: userInfo.Gender,
 			Nickname: userInfo.NickName}

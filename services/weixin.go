@@ -24,19 +24,20 @@ type WXLoginResponse struct {
 
 type Watermark struct {
 	AppID     string `json:"appid"`
-	TimeStamp int    `json:"timestamp"`
+	TimeStamp int64  `json:"timestamp"`
 }
 
 type WXUserInfo struct {
-	OpenID    string    `json:"openId"`
+	OpenID    string    `json:"openId,omitempty"`
 	NickName  string    `json:"nickName"`
 	AvatarUrl string    `json:"avatarUrl"`
 	Gender    int       `json:"gender"`
 	Country   string    `json:"country"`
 	Province  string    `json:"province"`
 	City      string    `json:"city"`
-	UnionID   string    `json:"unionId"`
-	Watermark Watermark `json:"watermark"`
+	UnionID   string    `json:"unionId,omitempty"`
+	Language  string    `json:"language"`
+	Watermark Watermark `json:"watermark,omitempty"`
 }
 
 type ResUserInfo struct {
@@ -47,15 +48,7 @@ type ResUserInfo struct {
 	IV            string     `json:"iv"`
 }
 
-func Login(code string, fullUserInfo string) *WXUserInfo {
-
-	var resUserInfo ResUserInfo
-
-	err := json.Unmarshal([]byte(fullUserInfo), &resUserInfo)
-
-	if err != nil {
-		return nil
-	}
+func Login(code string, fullUserInfo ResUserInfo) *WXUserInfo {
 
 	secret := beego.AppConfig.String("weixin::secret")
 	appid := beego.AppConfig.String("weixin::appid")
@@ -71,13 +64,18 @@ func Login(code string, fullUserInfo string) *WXUserInfo {
 	req.ToJSON(&res)
 
 	s := sha1.New()
-	s.Write([]byte(resUserInfo.RawData + res.SessionKey))
-	sha1hash := hex.EncodeToString(s.Sum(nil))
+	s.Write([]byte(fullUserInfo.RawData + res.SessionKey))
+	sha1 := s.Sum(nil)
+	sha1hash := hex.EncodeToString(sha1)
 
-	if resUserInfo.Signature != sha1hash {
+	// fmt.Println(fullUserInfo.RawData + res.SessionKey)
+	// fmt.Println(fullUserInfo.Signature)
+	// fmt.Println(sha1hash)
+
+	if fullUserInfo.Signature != sha1hash {
 		return nil
 	}
-	userinfo := DecryptUserInfoData(res.SessionKey, resUserInfo.EncryptedData, resUserInfo.IV)
+	userinfo := DecryptUserInfoData(res.SessionKey, fullUserInfo.EncryptedData, fullUserInfo.IV)
 
 	return userinfo
 
@@ -96,7 +94,8 @@ func DecryptUserInfoData(sessionKey string, encryptedData string, iv string) *WX
 	}
 
 	var wxuserinfo WXUserInfo
-	err = json.Unmarshal([]byte(decryptedData), &wxuserinfo)
+	//fmt.Println(string(decryptedData))
+	err = json.Unmarshal(decryptedData, &wxuserinfo)
 	if err != nil {
 
 	}
