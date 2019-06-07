@@ -1,35 +1,36 @@
 package controllers
 
 import (
-	"strings"
-
-	"github.com/astaxie/beego"
 	"github.com/moshopserver/services"
+	"github.com/moshopserver/utils"
 )
 
-type BaseController struct {
-	beego.Controller
-}
+// type BaseController struct {
+// 	beego.Controller
+// }
 
-var userId string
+// var userId string
 
-func (this *BaseController) init() {
-	token := this.Ctx.Input.Header("x-nideshop-token")
+// //https://blog.csdn.net/hzwy23/article/details/53314306过滤器
 
-	userId = services.GetUserID(token)
+// func (this *BaseController) init() {
+// 	token := this.Ctx.Input.Header("x-nideshop-token")
 
-	controller, action := this.GetControllerAndAction()
+// 	userId = services.GetUserID(token)
 
-	publiccontrollerlist := beego.AppConfig.String("controller::publicController")
-	publicactionlist := beego.AppConfig.String("action::publicAction")
+// 	controller, action := this.GetControllerAndAction()
 
-	if !strings.Contains(publiccontrollerlist, controller) && !strings.Contains(publicactionlist, action) {
-		if userId == "" {
-			this.Abort("401")
-		}
-	}
-}
+// 	publiccontrollerlist := beego.AppConfig.String("controller::publicController")
+// 	publicactionlist := beego.AppConfig.String("action::publicAction")
+
+// 	if !strings.Contains(publiccontrollerlist, controller) && !strings.Contains(publicactionlist, action) {
+// 		if userId == "" {
+// 			this.Abort("401")
+// 		}
+// 	}
+// }
 
 func getLoginUserId() int {
-	return 1 //utils.String2Int(userId)
+	intuserId := utils.String2Int(services.LoginUserId)
+	return intuserId
 }

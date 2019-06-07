@@ -57,19 +57,24 @@ func (this *AddressController) Address_Detail() {
 	addresstable := new(models.NideshopAddress)
 	var address models.NideshopAddress
 
-	o.QueryTable(addresstable).Filter("id", intid).Filter("user_id", getLoginUserId()).One(&address)
+	err := o.QueryTable(addresstable).Filter("id", intid).Filter("user_id", getLoginUserId()).One(&address)
 
-	provicename := models.GetRegionName(address.ProvinceId)
-	cityname := models.GetRegionName(address.CityId)
-	distinctname := models.GetRegionName(address.DistrictId)
+	var val AddressListRtnJson
 
-	utils.ReturnHTTPSuccess(&this.Controller, AddressListRtnJson{
-		Address:      address,
-		ProviceName:  provicename,
-		CityName:     cityname,
-		DistrictName: distinctname,
-		FullRegion:   provicename + cityname + distinctname,
-	})
+	if err != orm.ErrNoRows {
+
+		provicename := models.GetRegionName(address.ProvinceId)
+		cityname := models.GetRegionName(address.CityId)
+		distinctname := models.GetRegionName(address.DistrictId)
+		val = AddressListRtnJson{
+			Address:      address,
+			ProviceName:  provicename,
+			CityName:     cityname,
+			DistrictName: distinctname,
+			FullRegion:   provicename + cityname + distinctname,
+		}
+	}
+	utils.ReturnHTTPSuccess(&this.Controller, val)
 	this.ServeJSON()
 
 }

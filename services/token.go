@@ -2,11 +2,14 @@ package services
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-const key string = "adf1212!@$"
+var key = []byte("adfadf!@#2")
 
 type CustomClaims struct {
 	UserID string `json:"userid"`
@@ -71,4 +74,37 @@ func Verify(tokenstr string) bool {
 	token := Parse(tokenstr)
 	return token != nil
 
+}
+
+func getControllerAndAction(rawvalue string) (controller, action string) {
+	vals := strings.Split(rawvalue, "/")
+	return vals[2], vals[2] + "/" + vals[3]
+}
+
+var LoginUserId string
+
+func FilterFunc(ctx *context.Context) {
+
+	controller, action := getControllerAndAction(ctx.Request.RequestURI)
+	token := ctx.Input.Header("x-nideshop-token")
+
+	if action == "auth/loginByWeixin" {
+		return
+	}
+
+	if token == "" {
+		ctx.Redirect(401, "api/auth/loginByWeixin")
+		return
+	}
+	LoginUserId = GetUserID(token)
+
+	publiccontrollerlist := beego.AppConfig.String("controller::publicController")
+	publicactionlist := beego.AppConfig.String("action::publicAction")
+
+	if !strings.Contains(publiccontrollerlist, controller) && !strings.Contains(publicactionlist, action) {
+		if LoginUserId == "" {
+			ctx.Redirect(401, "/api/auth/loginByWeixin")
+			//http.Redirect(ctx.ResponseWriter, ctx.Request, "/", http.StatusMovedPermanently)
+		}
+	}
 }

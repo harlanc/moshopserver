@@ -87,7 +87,7 @@ type HotRtnJson struct {
 }
 
 type CountRtnJson struct {
-	GoodsCount int64 `json:"goodscount"`
+	GoodsCount int64 `json:"goodsCount"`
 }
 
 func updateJsonKeysGoods(vals []orm.Params) {
