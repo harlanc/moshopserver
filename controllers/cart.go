@@ -48,7 +48,7 @@ func getCart() IndexCartData {
 	for _, val := range carts {
 		goodsCount += val.Number
 		goodsAmount += float64(val.Number) * val.RetailPrice
-		if val.Checked == 0 {
+		if val.Checked == 1 {
 			checkedGoodsCount += val.Number
 			checkedGoodsAmount += float64(val.Number) * val.RetailPrice
 		}
@@ -304,22 +304,22 @@ func (this *CartController) Cart_GoodsCount() {
 
 type CartAddress struct {
 	models.NideshopAddress
-	ProviceName  string
-	CityName     string
-	DistrictName string
-	FullRegion   string
+	ProvinceName string `json:"province_name"`
+	CityName     string `json:"city_name"`
+	DistrictName string `json:"district_name"`
+	FullRegion   string `json:"full_region"`
 }
 
 type CheckoutRtnJson struct {
-	Address          CartAddress
-	FreightPrice     float64
-	CheckedCoupon    []models.NideshopUserCoupon
-	CouponList       []models.NideshopUserCoupon
-	CouponPrice      float64
-	CheckedGoodsList []models.NideshopCart
-	GoodsTotalPrice  float64
-	OrderTotalPrice  float64
-	ActualPrice      float64
+	Address          CartAddress                 `json:"checkedAddress"`
+	FreightPrice     float64                     `json:"freightPrice"`
+	CheckedCoupon    []models.NideshopUserCoupon `json:"checkedCoupon"`
+	CouponList       []models.NideshopUserCoupon `json:"couponList"`
+	CouponPrice      float64                     `json:"couponPrice"`
+	CheckedGoodsList []models.NideshopCart       `json:"checkedGoodsList"`
+	GoodsTotalPrice  float64                     `json:"goodsTotalPrice"`
+	OrderTotalPrice  float64                     `json:"orderTotalPrice"`
+	ActualPrice      float64                     `json:"actualPrice"`
 }
 
 func (this *CartController) Cart_Checkout() {
@@ -341,11 +341,10 @@ func (this *CartController) Cart_Checkout() {
 
 	if err != orm.ErrNoRows {
 		customaddress.NideshopAddress = address
-		customaddress.ProviceName = models.GetRegionName(address.ProvinceId)
+		customaddress.ProvinceName = models.GetRegionName(address.ProvinceId)
 		customaddress.CityName = models.GetRegionName(address.CityId)
 		customaddress.DistrictName = models.GetRegionName(address.DistrictId)
-		customaddress.FullRegion = customaddress.ProviceName + customaddress.CityName + customaddress.DistrictName
-
+		customaddress.FullRegion = customaddress.ProvinceName + customaddress.CityName + customaddress.DistrictName
 	}
 
 	var freightPrice float64 = 0.0
@@ -357,6 +356,10 @@ func (this *CartController) Cart_Checkout() {
 		}
 	}
 
+	usercoupontable := new(models.NideshopUserCoupon)
+	var couponlist []models.NideshopUserCoupon
+	o.QueryTable(usercoupontable).All(&couponlist)
+
 	var couponPrice float64 = 0.0
 
 	goodstotalprice := cartData.CartTotal.CheckedGoodsAmount
@@ -367,7 +370,7 @@ func (this *CartController) Cart_Checkout() {
 		Address:      customaddress,
 		FreightPrice: freightPrice,
 		// checkedCoupon: {},
-		// couponList: couponList,
+		CouponList:       couponlist,
 		CouponPrice:      couponPrice,
 		CheckedGoodsList: checkedgoodslist,
 		GoodsTotalPrice:  goodstotalprice,

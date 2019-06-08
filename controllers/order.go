@@ -28,10 +28,10 @@ func GetOrderPageData(rawData []models.NideshopOrder, page int, size int) utils.
 
 type OrderListRtnJson struct {
 	models.NideshopOrder
-	GoodsList       []models.NideshopOrderGoods
-	GoodsCount      int
-	OrderStatusText string
-	HandOption      models.OrderHandleOption
+	GoodsList       []models.NideshopOrderGoods `json:"goodList"`
+	GoodsCount      int                         `json:"goodsCount"`
+	OrderStatusText string                      `json:"order_status_text"`
+	HandOption      models.OrderHandleOption    `json:"handleOption"`
 }
 
 func (this *OrderController) Order_List() {

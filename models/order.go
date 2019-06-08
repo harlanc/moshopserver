@@ -24,14 +24,14 @@ func GetOrderStatusText(orderid int) string {
 }
 
 type OrderHandleOption struct {
-	Cancel   bool
-	Delete   bool
-	Pay      bool
-	Comment  bool
-	Delivery bool
-	Confirm  bool
-	Return   bool
-	Buy      bool
+	Cancel   bool `json:"cancel"`
+	Delete   bool `json:"delete"`
+	Pay      bool `json:"pay"`
+	Comment  bool `json:"comment"`
+	Delivery bool `json:"delivery"`
+	Confirm  bool `json:"confirm"`
+	Return   bool `json:"return"`
+	Buy      bool `json:"buy"`
 }
 
 func GetOrderHandleOption(orderid int) OrderHandleOption {
