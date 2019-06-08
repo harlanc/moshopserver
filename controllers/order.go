@@ -69,20 +69,20 @@ func (this *OrderController) Order_List() {
 
 type OrderInfo struct {
 	models.NideshopOrder
-	ProviceName         string
-	CityName            string
-	DistrictName        string
-	FullRegion          string
-	Express             services.ExpressRtnInfo
-	OrderStatusText     string
-	FormatAddTime       string
-	FormatFinalPlayTime string
+	ProvinceName        string                  `json:"province_name"`
+	CityName            string                  `json:"city_name"`
+	DistrictName        string                  `json:"district_name"`
+	FullRegion          string                  `json:"full_region"`
+	Express             services.ExpressRtnInfo `json:"express"`
+	OrderStatusText     string                  `json:"order_status_text"`
+	FormatAddTime       string                  `json:"add_time"`
+	FormatFinalPlayTime string                  `json:"final_pay_time"`
 }
 
 type OrderDetailRtnJson struct {
-	OrderInfo    OrderInfo
-	OrderGoods   models.NideshopOrderGoods
-	HandleOption models.OrderHandleOption
+	OrderInfo    OrderInfo                   `json:"orderInfo"`
+	OrderGoods   []models.NideshopOrderGoods `json:"orderGoods"`
+	HandleOption models.OrderHandleOption    `json:"handleOption"`
 }
 
 func (this *OrderController) Order_Detail() {
@@ -100,18 +100,18 @@ func (this *OrderController) Order_Detail() {
 	}
 
 	var orderinfo OrderInfo = OrderInfo{NideshopOrder: order}
-	orderinfo.ProviceName = models.GetRegionName(order.Province)
+	orderinfo.ProvinceName = models.GetRegionName(order.Province)
 	orderinfo.CityName = models.GetRegionName(order.City)
 	orderinfo.DistrictName = models.GetRegionName(order.District)
-	orderinfo.FullRegion = orderinfo.ProviceName + orderinfo.CityName + orderinfo.DistrictName
+	orderinfo.FullRegion = orderinfo.ProvinceName + orderinfo.CityName + orderinfo.DistrictName
 
 	lastestexpressinfo := models.GetLatestOrderExpress(intorderId)
 	orderinfo.Express = lastestexpressinfo
 
 	ordergoodstable := new(models.NideshopOrderGoods)
-	var ordergoods models.NideshopOrderGoods
+	var ordergoods []models.NideshopOrderGoods
 
-	err = o.QueryTable(ordergoodstable).Filter("id", intorderId).One(&ordergoods)
+	o.QueryTable(ordergoodstable).Filter("order_id", intorderId).All(&ordergoods)
 
 	orderinfo.OrderStatusText = models.GetOrderStatusText(intorderId)
 	orderinfo.FormatAddTime = utils.FormatTimestamp(orderinfo.AddTime, "2006-01-02 03:04:05 PM")
