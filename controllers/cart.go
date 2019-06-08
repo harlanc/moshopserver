@@ -329,7 +329,7 @@ func (this *CartController) Cart_Checkout() {
 
 	o := orm.NewOrm()
 	addresstable := new(models.NideshopAddress)
-	var address CartAddress
+	var address models.NideshopAddress
 	var err error
 	if addressId != "" {
 		err = o.QueryTable(addresstable).Filter("is_default", 1).Filter("user_id", getLoginUserId()).One(&address)
@@ -337,11 +337,15 @@ func (this *CartController) Cart_Checkout() {
 		err = o.QueryTable(addresstable).Filter("id", intaddressid).Filter("user_id", getLoginUserId()).One(&address)
 	}
 
+	var customaddress CartAddress
+
 	if err != orm.ErrNoRows {
-		address.ProviceName = models.GetRegionName(address.ProvinceId)
-		address.CityName = models.GetRegionName(address.CityId)
-		address.DistrictName = models.GetRegionName(address.DistrictId)
-		address.FullRegion = address.ProviceName + address.CityName + address.DistrictName
+		customaddress.NideshopAddress = address
+		customaddress.ProviceName = models.GetRegionName(address.ProvinceId)
+		customaddress.CityName = models.GetRegionName(address.CityId)
+		customaddress.DistrictName = models.GetRegionName(address.DistrictId)
+		customaddress.FullRegion = customaddress.ProviceName + customaddress.CityName + customaddress.DistrictName
+
 	}
 
 	var freightPrice float64 = 0.0
@@ -360,7 +364,7 @@ func (this *CartController) Cart_Checkout() {
 	actualPrice := ordertotalprice - 0
 
 	utils.ReturnHTTPSuccess(&this.Controller, CheckoutRtnJson{
-		Address:      address,
+		Address:      customaddress,
 		FreightPrice: freightPrice,
 		// checkedCoupon: {},
 		// couponList: couponList,

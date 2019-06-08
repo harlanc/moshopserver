@@ -3,13 +3,17 @@ package services
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/moshopserver/utils"
 )
 
 var key = []byte("adfadf!@#2")
+
+var expireTime = 20
 
 type CustomClaims struct {
 	UserID string `json:"userid"`
@@ -41,7 +45,7 @@ func Parse(tokenstr string) *jwt.Token {
 			fmt.Println("That's not even a token")
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 			// Token is either expired or not active yet
-			fmt.Println("Timing is everything")
+			fmt.Println("The token is expired or not valid.")
 		} else {
 			fmt.Println("Couldn't handle this token:", err)
 		}
@@ -53,9 +57,11 @@ func Parse(tokenstr string) *jwt.Token {
 }
 
 func Create(userid string) string {
+
 	claims := CustomClaims{
 		userid, jwt.StandardClaims{
-			ExpiresAt: 15000,
+			IssuedAt:  time.Now().Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * time.Duration(expireTime)).Unix(),
 			Issuer:    "test",
 		},
 	}
@@ -93,7 +99,9 @@ func FilterFunc(ctx *context.Context) {
 	}
 
 	if token == "" {
-		ctx.Redirect(401, "api/auth/loginByWeixin")
+		data := utils.GetHTTPRtnJsonData(401, "need relogin")
+		ctx.Output.JSON(data, true, false)
+		ctx.Redirect(200, "/")
 		return
 	}
 	LoginUserId = GetUserID(token)
@@ -103,7 +111,9 @@ func FilterFunc(ctx *context.Context) {
 
 	if !strings.Contains(publiccontrollerlist, controller) && !strings.Contains(publicactionlist, action) {
 		if LoginUserId == "" {
-			ctx.Redirect(401, "/api/auth/loginByWeixin")
+			data := utils.GetHTTPRtnJsonData(401, "need relogin")
+			ctx.Output.JSON(data, true, false)
+			ctx.Redirect(200, "/")
 			//http.Redirect(ctx.ResponseWriter, ctx.Request, "/", http.StatusMovedPermanently)
 		}
 	}

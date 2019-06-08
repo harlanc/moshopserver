@@ -26,5 +26,17 @@ func ReturnHTTPSuccess(this *beego.Controller, val interface{}) {
 	} else {
 		this.Data["json"] = json.RawMessage(string(data))
 	}
+}
+
+func GetHTTPRtnJsonData(errno int, errmsg string) interface{} {
+
+	rtndata := HTTPData{
+		ErrNo:  errno,
+		ErrMsg: errmsg,
+		Data:   nil,
+	}
+	data, _ := json.Marshal(rtndata)
+
+	return json.RawMessage(string(data))
 
 }

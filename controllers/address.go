@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/moshopserver/models"
@@ -12,11 +14,11 @@ type AddressController struct {
 }
 
 type AddressListRtnJson struct {
-	Address      models.NideshopAddress `json:"address"`
-	ProviceName  string                 `json:"proviceName"`
-	CityName     string                 `json:"cityName"`
-	DistrictName string                 `json:"districtName"`
-	FullRegion   string                 `json:"fullRegion"`
+	models.NideshopAddress
+	ProviceName  string `json:"provice_name"`
+	CityName     string `json:"city_name"`
+	DistrictName string `json:"district_name"`
+	FullRegion   string `json:"full_region"`
 }
 
 func (this *AddressController) Address_List() {
@@ -35,11 +37,11 @@ func (this *AddressController) Address_List() {
 		cityname := models.GetRegionName(val.CityId)
 		distinctname := models.GetRegionName(val.DistrictId)
 		rtnaddress = append(rtnaddress, AddressListRtnJson{
-			Address:      val,
-			ProviceName:  provicename,
-			CityName:     cityname,
-			DistrictName: distinctname,
-			FullRegion:   provicename + cityname + distinctname,
+			NideshopAddress: val,
+			ProviceName:     provicename,
+			CityName:        cityname,
+			DistrictName:    distinctname,
+			FullRegion:      provicename + cityname + distinctname,
 		})
 
 	}
@@ -67,38 +69,53 @@ func (this *AddressController) Address_Detail() {
 		cityname := models.GetRegionName(address.CityId)
 		distinctname := models.GetRegionName(address.DistrictId)
 		val = AddressListRtnJson{
-			Address:      address,
-			ProviceName:  provicename,
-			CityName:     cityname,
-			DistrictName: distinctname,
-			FullRegion:   provicename + cityname + distinctname,
+			NideshopAddress: address,
+			ProviceName:     provicename,
+			CityName:        cityname,
+			DistrictName:    distinctname,
+			FullRegion:      provicename + cityname + distinctname,
 		}
 	}
 	utils.ReturnHTTPSuccess(&this.Controller, val)
 	this.ServeJSON()
+}
 
+type AddressSaveBody struct {
+	Address    string `json:"address"`
+	CityId     int    `json:"city_id"`
+	DistrictId int    `json:"district_id"`
+	IsDefault  bool   `json:"is_default"`
+	Mobile     string `json:"mobile"`
+	Name       string `json:"name"`
+	ProvinceId int    `json:"province_id"`
+	AddressId  int    `json:"address_id"`
 }
 
 func (this *AddressController) Address_Save() {
 
-	addressid := this.GetString("id")
-	name := this.GetString("name")
-	mobile := this.GetString("mobile")
-	provinceid := this.GetString("province_id")
-	cityid := this.GetString("city_id")
-	distinctid := this.GetString("distinct_id")
-	address := this.GetString("address")
+	var asb AddressSaveBody
+	body := this.Ctx.Input.RequestBody
+	json.Unmarshal(body, &asb)
+
+	address := asb.Address
+	name := asb.Name
+	mobile := asb.Mobile
+	provinceid := asb.ProvinceId
+	cityid := asb.CityId
+	distinctid := asb.DistrictId
+	isdefault := asb.IsDefault
+	addressid := asb.AddressId
 	userid := getLoginUserId()
-	var isdefault int
-	if this.GetString("id_default") == "true" {
-		isdefault = 1
+	var intisdefault int
+	if isdefault {
+		intisdefault = 1
 	} else {
-		isdefault = 0
+		intisdefault = 0
 	}
 
-	intcityid := utils.String2Int(cityid)
-	intprovinceid := utils.String2Int(provinceid)
-	intdistinctid := utils.String2Int(distinctid)
+	intcityid := cityid
+	intprovinceid := provinceid
+	intdistinctid := distinctid
 
 	// type NideshopAddress struct {
 	// 	Address    string `orm:"not null default '' VARCHAR(120)"`
@@ -121,23 +138,25 @@ func (this *AddressController) Address_Save() {
 		Name:       name,
 		Mobile:     mobile,
 		UserId:     userid,
-		IsDefault:  isdefault,
+		IsDefault:  intisdefault,
 	}
 	o := orm.NewOrm()
 	addresstable := new(models.NideshopAddress)
 
 	var intid int64
-	if addressid == "" {
-		id, _ := o.Insert(addressdata)
-		intid = id
+	if addressid == 0 {
+		id, err := o.Insert(&addressdata)
+		if err == nil {
+			intid = id
+		}
 	} else {
 		o.QueryTable(addresstable).Filter("id", intid).Filter("user_id", userid).Update(orm.Params{
 			"is_default": 0,
 		})
 	}
 
-	if isdefault == 1 {
-		_, err := o.Raw("UPDATE nideshop_address SET is_default = 0 where id <> ? and user_id =", intid, userid).Exec()
+	if isdefault {
+		_, err := o.Raw("UPDATE nideshop_address SET is_default = 0 where id <> ? and user_id = ?", intid, userid).Exec()
 		if err == nil {
 			//res.RowsAffected()
 			//fmt.Println("mysql row affected nums: ", num)
