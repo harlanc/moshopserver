@@ -278,7 +278,7 @@ type NideshopOrder struct {
 	GoodsPrice     float64 `json:"goods_price"`
 	Id             int     `json:"id"`
 	Integral       int     `json:"integral"`
-	IntegralMoney  string  `json:"integral_money"`
+	IntegralMoney  float64 `json:"integral_money"`
 	Mobile         string  `json:"mobile"`
 	OrderPrice     float64 `json:"order_price"`
 	OrderSn        string  `json:"order_sn"`
@@ -290,7 +290,7 @@ type NideshopOrder struct {
 	PayTime        int     `json:"pay_time"`
 	Postscript     string  `json:"postscript"`
 	Province       int     `json:"province"`
-	ShippingFee    string  `json:"shipping_fee"`
+	ShippingFee    float64 `json:"shipping_fee"`
 	ShippingStatus int     `json:"shipping_status"`
 	UserId         int     `json:"user_id"`
 }

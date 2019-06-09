@@ -10,25 +10,25 @@ import (
 )
 
 type Traces struct {
-	AcceptTime    string
-	AcceptStation string
-	Remark        string
+	AcceptTime    string `json:"accept_time"`
+	AcceptStation string `json:"accept_station"`
+	Remark        string `json:"remark"`
 }
 
 type ExpressRtnInfo struct {
-	Success      bool
-	ShipperCode  string
-	ShipperName  string
-	LogisticCode string
-	IsFinish     int
-	Traces       []Traces
-	RequestTime  int64
+	Success      bool     `json:"success"`
+	ShipperCode  string   `json:"shipper_code"`
+	ShipperName  string   `json:"shipper_name"`
+	LogisticCode string   `json:"logistic_code"`
+	IsFinish     int      `json:"is_finish"`
+	Traces       []Traces `json:"traces"`
+	RequestTime  int64    `json:"request_time"`
 }
 
 type ExpressResult struct {
-	Success bool
-	State   int
-	Traces  []Traces
+	Success bool     `json:"success"`
+	State   int      `json:"state"`
+	Traces  []Traces `json:"traces"`
 }
 
 func QueryExpress(shippercode, logisticcode string, ordercode string) ExpressRtnInfo {
