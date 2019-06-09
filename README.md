@@ -48,17 +48,17 @@
 
 ## 微信小程序客户端截图
 
-![首页](http:/qiniu.harlanc.vip/6.9.2019_5:41:56.png)
+![首页](http://qiniu.harlanc.vip/6.9.2019_5:41:56.png)
 
-![专题](http:/qiniu.harlanc.vip/6.9.2019_5:43:3.png)
+![专题](http://qiniu.harlanc.vip/6.9.2019_5:43:3.png)
 
-![分类](http:/qiniu.harlanc.vip/6.9.2019_5:43:41.png)
+![分类](http://qiniu.harlanc.vip/6.9.2019_5:43:41.png)
 
-![商品列表](http:/qiniu.harlanc.vip/6.9.2019_5:45:9.png)
+![商品列表](http://qiniu.harlanc.vip/6.9.2019_5:45:9.png)
 
-![商品详情](http:/qiniu.harlanc.vip/6.9.2019_5:45:53.png)
+![商品详情](http://qiniu.harlanc.vip/6.9.2019_5:45:53.png)
 
-![购物车](http:/qiniu.harlanc.vip/6.9.2019_5:46:26.png)
+![购物车](http://qiniu.harlanc.vip/6.9.2019_5:46:26.png)
 
 ## 功能列表
 + 首页
