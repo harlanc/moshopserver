@@ -24,6 +24,21 @@
         CREATE SCHEMA `nideshop` DEFAULT CHARACTER SET utf8mb4 ;
 
 - 配置好小程序相关字段
+   
+        [default]
+        default_module='api'
+        [weixin] 
+        #小程序 appid
+        appid=""
+        #小程序密钥
+        secret="" 
+        #商户帐号ID
+        mch_id='3' 
+        #微信支付密钥
+        apikey='4'
+        #微信异步通知，例：https://www.nideshop.com/api/pay/notify 
+        notify_url='5' 
+        
 -  运行以下命令（默认为开启8080端口）
 
         go run main.go
@@ -65,6 +80,7 @@
 - [beego](https://github.com/astaxie/beego)
 - [go-sql-driver](https://github.com/go-sql-driver/mysql)
 - [go.uuid](https://github.com/satori/go.uuid)
+- [jwt-go](https://github.com/dgrijalva/jwt-go)
 
 ## 联系方式
 
