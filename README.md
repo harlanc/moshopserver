@@ -1,5 +1,14 @@
 # moshopserver小程序商城后台系统
 
+ [![Build Status][1]][2] [![Go Report Card][3]][4] [![MIT licensed][5]][6] 
+
+[1]: https://travis-ci.org/harlanc/moshopserver.svg?branch=master
+[2]: https://travis-ci.org/harlanc/moshopserver
+[3]: https://goreportcard.com/badge/github.com/harlanc/moshopserver
+[4]: https://goreportcard.com/report/github.com/harlanc/moshopserver
+[5]: https://img.shields.io/badge/license-MIT-blue.svg
+[6]: LICENSE
+
 ## 介绍
 
 - [nideshop](https://github.com/tumobi/nideshop)的golang实现
@@ -78,10 +87,9 @@
 - [go-sql-driver](https://github.com/go-sql-driver/mysql)
 - [go.uuid](https://github.com/satori/go.uuid)
 - [jwt-go](https://github.com/dgrijalva/jwt-go)
+- [slice](https://github.com/bradfitz/slice)
+- [wxpay](https://github.com/objcoding/wxpay)
 
-## 联系方式
 
-
-![](http://qiniu.harlanc.vip/6.5.2019_8:00:27.png)
 
 
