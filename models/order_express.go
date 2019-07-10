@@ -5,8 +5,8 @@ import (
 
 	"github.com/astaxie/beego/orm"
 
-	"github.com/moshopserver/services"
-	"github.com/moshopserver/utils"
+	"github.com/harlanc/moshopserver/services"
+	"github.com/harlanc/moshopserver/utils"
 )
 
 /**
