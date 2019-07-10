@@ -9,6 +9,8 @@ install:
   - go get -u -v github.com/satori/go.uuid
   - go get -u -v github.com/dgrijalva/jwt-go
   - go get -u -v github.com/go-sql-driver/mysql
+  - go get -u -v github.com/bradfitz/slice
+  - go get -u -v github.com/objcoding/wxpay
 go:
   - 1.11.5
 
