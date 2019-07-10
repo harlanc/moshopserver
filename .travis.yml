@@ -1,0 +1,16 @@
+language: go
+
+git:
+  depth: 3
+  quiet: true
+
+install:
+  - go get -u -v github.com/astaxie/beego
+  - go get -u -v github.com/satori/go.uuid
+  - go get -u -v github.com/dgrijalva/jwt-go
+  - go get -u -v github.com/go-sql-driver/mysql
+go:
+  - 1.11.5
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
