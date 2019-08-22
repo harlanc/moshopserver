@@ -139,7 +139,8 @@ func (this *CartController) Cart_Add() {
 		if product.GoodsNumber < (intnumber + cart.Number) {
 			this.CustomAbort(400, "库存不足")
 		}
-		o.QueryTable(carttable).Update(orm.Params{"number": orm.ColValue(orm.ColAdd, intnumber)})
+		o.QueryTable(carttable).Filter("id", cart.Id).Filter("goods_id", intgoodsId).
+			Filter("product_id", intproductId).Update(orm.Params{"number": orm.ColValue(orm.ColAdd, intnumber)})
 	}
 
 	utils.ReturnHTTPSuccess(&this.Controller, getCart())
