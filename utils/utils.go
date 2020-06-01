@@ -32,12 +32,7 @@ func Float642String(val float64) string {
 }
 
 func GetUUID() string {
-	uuid, err := uuid.NewV4()
-	if err != nil {
-		return ""
-	} else {
-		return uuid.String()
-	}
+	return uuid.NewV4().String()
 }
 
 //the result likes 1423361979

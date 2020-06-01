@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/utils"
 )
 
 type SpecificationData struct {

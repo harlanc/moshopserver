@@ -8,7 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/utils"
 	"github.com/objcoding/wxpay"
 )
 

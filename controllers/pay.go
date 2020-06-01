@@ -3,9 +3,9 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"github.com/harlanc/moshopserver/models"
-	"github.com/harlanc/moshopserver/services"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/models"
+	"moshopserver/services"
+	"moshopserver/utils"
 )
 
 type PayController struct {

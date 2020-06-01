@@ -20,13 +20,13 @@
 
 ## 测试环境搭建
 
-- 克隆源码到$GOPATH目录下
+- 克隆源码
     
-        go clone https://github.com/harlanc/moshopserver
+        git clone https://github.com/harlanc/moshopserver
   
 - 下载所有依赖包
 
-        go get -d ./...
+       go mod vendor
 
 - 创建数据库nideshop并导入项目根目录下的nideshop.sql
       
