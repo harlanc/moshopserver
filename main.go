@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/astaxie/beego"
-	_ "github.com/harlanc/moshopserver/models"
-	_ "github.com/harlanc/moshopserver/routers"
-	"github.com/harlanc/moshopserver/services"
-	_ "github.com/harlanc/moshopserver/utils"
+	_ "moshopserver/models"
+	_ "moshopserver/routers"
+	"moshopserver/services"
+	_ "moshopserver/utils"
 )
 
 func main() {
@@ -14,8 +14,8 @@ func main() {
 	beego.BConfig.CopyRequestBody = true
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
-	beego.BConfig.Listen.HTTPAddr = "192.168.0.104"
-	beego.BConfig.Listen.HTTPPort = 8080
+	beego.BConfig.Listen.HTTPAddr = ""
+	beego.BConfig.Listen.HTTPPort = 8089
 
 	beego.InsertFilter("/api/*", beego.BeforeExec, services.FilterFunc, true, true)
 

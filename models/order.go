@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/utils"
 )
 
 func GetOrderStatusText(orderid int) string {

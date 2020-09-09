@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego/httplib"
 
 	"github.com/astaxie/beego"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/utils"
 )
 
 type Traces struct {

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/harlanc/moshopserver/services"
-	"github.com/harlanc/moshopserver/utils"
+	"moshopserver/services"
+	"moshopserver/utils"
 )
 
 // type BaseController struct {
